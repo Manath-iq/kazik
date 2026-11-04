@@ -1,0 +1,8 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "street-legends-local",
+  "main": "src/local.ts",
+  "compatibility_date": "2026-11-04",
+  "d1_databases": [{ "binding": "DB", "database_name": "street-legends", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" }],
+  "vars": { "APP_URL": "http://localhost:5174", "BOT_USERNAME": "", "ALLOWED_ORIGIN": "http://localhost:5174" }
+}

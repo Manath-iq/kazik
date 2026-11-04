@@ -1,0 +1,6 @@
+{
+  "name":"@street/web","private":true,"type":"module",
+  "scripts":{"dev":"vite --host 127.0.0.1","build":"vite build","build:test":"VITE_BOT_USERNAME=kaziktesttg_bot vite build","preview":"vite preview --host 127.0.0.1"},
+  "dependencies":{"@street/shared":"*","@fontsource/press-start-2p":"5.3.0","phaser":"3.90.0","react":"^19.2.0","react-dom":"^19.2.0"},
+  "devDependencies":{"vite":"^7.2.2","@vitejs/plugin-react":"^5.1.0","tailwindcss":"^4.1.17","@tailwindcss/vite":"^4.1.17"}
+}

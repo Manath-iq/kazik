@@ -1,0 +1,80 @@
+
+> street-legends@0.1.0 build
+> npm run build -w @street/web && npm run build -w @street/api
+
+
+> build
+> vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 144 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                    0.52 kB │ gzip:   0.37 kB
+dist/assets/press-start-2p-latin-400-normal-KLytu4cr.woff          6.33 kB
+dist/assets/press-start-2p-cyrillic-400-normal-DBn7fddJ.woff2      6.86 kB
+dist/assets/press-start-2p-latin-400-normal-_wFEWmAB.woff2        12.51 kB
+dist/assets/index-DUfF_x3f.css                                    35.09 kB │ gzip:  11.46 kB
+dist/assets/phaser-B8p8Giq7.js                                     0.47 kB │ gzip:   0.34 kB
+dist/assets/StreetScene-B_hOxpeF.js                               13.56 kB │ gzip:   5.24 kB
+dist/assets/index-Bor4_33e.js                                    343.87 kB │ gzip: 107.30 kB
+dist/assets/phaser-DFK5Ua9d.js                                 1,208.06 kB │ gzip: 330.08 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 3.71s
+
+> build
+> wrangler deploy --dry-run --outdir dist
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mFailed to write to log file Error: EPERM: operation not permitted, open '/Users/manath/Library/Preferences/.wrangler/logs/wrangler-2026-11-04_19-12-33_501.log'[0m
+
+      at async open (node:internal/fs/promises:636:25)
+      at async writeFile (node:internal/fs/promises:1239:14)
+      at async /Users/manath/myAI/kazik/node_modules/wrangler/wrangler-dist/cli.js:70588:7
+      at async Mutex.runWith (/Users/manath/myAI/kazik/node_modules/miniflare/dist/src/index.js:80900:16)
+      at async appendToDebugLogFile (/Users/manath/myAI/kazik/node_modules/wrangler/wrangler-dist/cli.js:70585:3) {
+    errno: -1,
+    code: 'EPERM',
+    syscall: 'open',
+    path: '/Users/manath/Library/Preferences/.wrangler/logs/wrangler-2026-11-04_19-12-33_501.log'
+  }
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mWould have written: [0m
+
+  --- 2026-11-04T19:12:33.617Z debug
+  🪵  Writing logs to "/Users/manath/Library/Preferences/.wrangler/logs/wrangler-2026-11-04_19-12-33_501.log"
+  ---
+  
+
+
+
+ ⛅️ wrangler 4.157.0
+────────────────────
+✨ Read 38 files from the assets directory /Users/manath/myAI/kazik/apps/web/dist
+Total Upload: 879.77 KiB / gzip: 147.00 KiB
+Your Worker has access to the following bindings:
+Binding                                                    Resource                  
+env.DB (street-legends)                                    D1 Database               
+env.APP_URL ("https://replace-me.workers.dev")             Environment Variable      
+env.BOT_USERNAME ("")                                      Environment Variable      
+env.ALLOWED_ORIGIN ("")                                    Environment Variable      
+
+--dry-run: exiting now.
+🪵  Logs were written to "/Users/manath/Library/Preferences/.wrangler/logs/wrangler-2026-11-04_19-12-33_501.log"

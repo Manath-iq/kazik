@@ -1,0 +1,14 @@
+{
+  "name":"@street/api","private":true,"type":"module",
+  "scripts":{
+    "dev":"wrangler dev --config wrangler.local.jsonc --ip 127.0.0.1 --port 8793",
+    "db:migrate:local":"wrangler d1 migrations apply street-legends --local --config wrangler.local.jsonc",
+    "build":"wrangler deploy --dry-run --outdir dist",
+    "build:test":"wrangler deploy --config wrangler.test.jsonc --dry-run --outdir dist/test",
+    "types":"wrangler types --env-interface CloudflareBindings",
+    "deploy:test":"wrangler deploy --config wrangler.test.jsonc",
+    "db:migrate:test":"wrangler d1 migrations apply street-legends-test --remote --config wrangler.test.jsonc"
+  },
+  "dependencies":{"hono":"^4.13.16","@street/shared":"*","zod":"^4.1.12"},
+  "devDependencies":{"wrangler":"4.157.0","@cloudflare/workers-types":"5.20261104.1"}
+}

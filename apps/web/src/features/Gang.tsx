@@ -1,0 +1,29 @@
+import { useEffect,useState } from 'react';
+import type { Profile,Rank } from '@street/shared';
+import { api } from '../app/api';
+import { Button,Panel,ScreenHeading,money,Empty,Icon } from '../components/ui';
+export function GangScreen({profile,refresh,notify,rankings}:{profile:Profile;refresh:()=>Promise<void>;notify:(s:string)=>void;rankings:()=>void}){
+ const [name,setName]=useState(''),[tag,setTag]=useState(''),[invite,setInvite]=useState(()=>new URLSearchParams(location.search).get('tgWebAppStartParam')??''),[link,setLink]=useState(''),[busy,setBusy]=useState(false);
+ const g=profile.gang,leader=g?.owner_id===profile.id;
+ const [rank,setRank]=useState<number|null>(null);
+ useEffect(()=>{if(!g)return;let live=true;void api<Rank[]>('/leaderboard/gangs').then(rows=>{if(live){const index=rows.findIndex(r=>r.id===g.id);setRank(index<0?null:index+1);}}).catch(()=>{});return ()=>{live=false;};},[g?.id,g?.season_score]);
+ async function action(path:string,body:unknown,message:string){setBusy(true);try{await api(path,body);await refresh();notify(message);}catch(e){notify((e as Error).message);}finally{setBusy(false);}}
+ async function makeInvite(){if(!g)return;setBusy(true);try{const r=await api<{token:string;url:string|null}>(`/gangs/${g.id}/invite`,{});setLink(r.url??r.token);}catch(e){notify((e as Error).message);}finally{setBusy(false);}}
+ return <div className="screen"><ScreenHeading kicker="СВОИ НА РАЙОНЕ" title="Банда"><p>В одиночку выживаешь. Вместе — в легендах.</p></ScreenHeading>
+  {g?<>
+   <Panel className="gang-hero"><span className="gang-tag">{g.tag}</span><h2>{g.name}</h2><div className="gang-metrics"><div><strong>{g.season_score}</strong><span>очки недели</span></div><div><strong className="cyan">{money(g.lifetime_xp)}</strong><span>опыт за всё время</span></div></div><div className="row-between"><span className="muted">{g.members.length} / 20 участников</span><button className="text-button" onClick={rankings}>{rank?`#${rank} В ТОПЕ`:'ВНЕ ТОП-50'} →</button></div></Panel>
+   {leader&&<Button disabled={busy} onClick={()=>void makeInvite()}>ПРИГЛАСИТЬ СВОИХ →</Button>}
+   {link&&<Panel><label htmlFor="invite-link" className="eyebrow">ПРИГЛАШЕНИЕ · ДЕЙСТВУЕТ 7 ДНЕЙ</label><input id="invite-link" readOnly value={link} onFocus={e=>e.target.select()}/><Button secondary onClick={()=>{void navigator.clipboard.writeText(link).then(()=>notify('Приглашение скопировано')).catch(()=>notify('Выдели ссылку и скопируй вручную'));}}>СКОПИРОВАТЬ</Button></Panel>}
+   <div className="section-title"><h2>Состав</h2><span className="eyebrow">ЛУЧШАЯ ВОЛНА НЕДЕЛИ</span></div>
+   {g.members.map((m,i)=><div className="member-row" key={m.user_id}><span className="rank-index">{String(i+1).padStart(2,'0')}</span><div className="member-name"><strong>{m.display_name}{m.user_id===profile.id?' · ты':''}</strong><small>{m.role==='leader'?'Лидер':'Участник'}</small></div><b className="lime">{m.best_wave}</b>{leader&&m.user_id!==profile.id&&<button className="icon-button" aria-label={`Удалить ${m.display_name}`} disabled={busy} onClick={()=>{if(window.confirm(`Удалить ${m.display_name} из банды?`))void action(`/gangs/${g.id}/kick`,{userId:m.user_id},'Участник удалён');}}>×</button>}</div>)}
+   <details className="rules"><summary>Как считается рейтинг</summary><p>Сумма лучших волн десяти сильнейших действующих участников. Повторные забеги не складываются. Сезон начинается в понедельник 00:00 UTC. Накопительный опыт не сбрасывается. Забег связан с бандой и составом на момент старта; при выходе вклад исчезает из текущего рейтинга. После смены банды — 24 часа до нового вступления. Взносов, общего банка и усилений персонажа нет.</p></details>
+   <div className="section-title"><h2>Последние вылазки</h2></div>{g.recent.length?g.recent.map(r=><div className="history-row" key={r.id}><span>Волна {r.wave}<small>{r.kills} противников</small></span><b className="cyan">+{r.gang_xp} XP</b></div>):<Empty title="Район ещё не слышал о вас">Заверши вылазку и открой историю банды.</Empty>}
+   {!leader&&<button className="text-button danger" disabled={busy} onClick={()=>{if(window.confirm('Выйти из банды? Сезонный вклад исчезнет, новое вступление через 24 часа.'))void action('/gangs/leave',{},'Ты покинул банду');}}>ПОКИНУТЬ БАНДУ</button>}
+  </>:<>
+   <Panel className="gang-empty-banner"><span className="gang-symbol" aria-hidden="true"><Icon name="gang" size={64}/></span><h2>Район помнит<br/>своих.</h2><p className="muted">Собери до 20 человек. Каждый лучший забег — вклад в общий топ.</p></Panel>
+   <Panel><span className="eyebrow">01 · СОБРАТЬ СВОИХ</span><h2>Создать банду</h2><form onSubmit={e=>{e.preventDefault();void action('/gangs',{name,tag},'Банда создана');}}><label>Название<input minLength={3} maxLength={24} required value={name} placeholder="Например, Ночной маршрут" onChange={e=>setName(e.target.value)}/></label><label>Тег · 2–5 букв или цифр<input minLength={2} maxLength={5} required pattern="[A-Za-zА-Яа-яЁё0-9]{2,5}" value={tag} placeholder="NIGHT" onChange={e=>setTag(e.target.value)}/></label><Button disabled={busy||profile.balance<1000}>СОЗДАТЬ · $1 000</Button>{profile.balance<1000&&<p className="small muted">Не хватает ${money(1000-profile.balance)}. Заработай на вылазке или работе.</p>}</form></Panel>
+   <Panel><span className="eyebrow">02 · НАЙТИ СВОИХ</span><h2>Есть приглашение?</h2><form onSubmit={e=>{e.preventDefault();let token=invite.trim();try{token=new URL(token).searchParams.get('startapp')??token;}catch{/* Введён код, не URL. */}void action('/gangs/join',{token:token.replace(/^gang_/,'')},'Ты в банде');}}><label>Код или ссылка<input required value={invite} placeholder="Вставь приглашение" onChange={e=>setInvite(e.target.value)}/></label><Button secondary disabled={busy}>ВСТУПИТЬ →</Button></form></Panel>
+  </>}
+  <Button secondary onClick={rankings}>РЕЙТИНГ РАЙОНА →</Button>
+ </div>;
+}

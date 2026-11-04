@@ -1,0 +1,14 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "street-legends-test",
+  "account_id": "1c69f973b0d62a313dee95603b7e1b77",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-04",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": { "directory": "../web/dist", "not_found_handling": "single-page-application", "run_worker_first": ["/api/*"] },
+  "d1_databases": [{ "binding": "DB", "database_name": "street-legends-test", "database_id": "f56227bb-5f37-4543-8f33-e9d40cba2a69", "migrations_dir": "migrations" }],
+  "vars": { "APP_URL": "https://street-legends-test.todominate-ai.workers.dev", "BOT_USERNAME": "kaziktesttg_bot", "ALLOWED_ORIGIN": "https://street-legends-test.todominate-ai.workers.dev" },
+  "observability": { "enabled": true, "logs": { "enabled": true, "head_sampling_rate": 0.1 }, "traces": { "enabled": true, "head_sampling_rate": 0.01 } },
+  "triggers": { "crons": ["*/15 * * * *"] }
+}

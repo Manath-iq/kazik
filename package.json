@@ -1,0 +1,42 @@
+{
+  "name": "street-legends",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n API,WEB \"npm run dev -w @street/api\" \"npm run dev -w @street/web\"",
+    "db:migrate:local": "npm run db:migrate:local -w @street/api",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "assets:fx": "node tools/fx/export.mjs",
+    "build": "npm run build -w @street/web && npm run build -w @street/api",
+    "build:test": "npm run build:test -w @street/web && npm run build:test -w @street/api",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "concurrently": "^9.2.0",
+    "esbuild": "^0.25.10",
+    "eslint": "^9.39.0",
+    "miniflare": "5.20261103.0-beta",
+    "sharp": "^0.35.5",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.0",
+    "vitest": "4.1.12"
+  },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "11.0.1"
+    }
+  }
+}

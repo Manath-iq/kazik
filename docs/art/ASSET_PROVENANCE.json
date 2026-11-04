@@ -1,0 +1,792 @@
+{
+  "project": "STREET LEGENDS",
+  "schemaVersion": 1,
+  "generatedOn": "2026-11-04",
+  "tool": "image_gen.imagegen",
+  "model": null,
+  "note": "All sources generated with native tool. Model not exposed. No supplied screenshot used as output. See chat for exact submitted prompts; reference document and processing recorded per asset. Gameplay animation not tested.",
+  "assets": [
+    {
+      "source": "art/source/P01-lobby-v01.png",
+      "runtime": "apps/web/public/assets/generated/lobby-night.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-694a5668-9103-49e6-b9f8-6f824f1bdea8.png",
+      "sourceSize": [
+        1086,
+        1448
+      ],
+      "sourceMode": "RGB",
+      "sourceSha256": "a5cfc1c75352b74f5a625afc58a890482d70d2b91a0c66e4100531bcadf3e68a",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "aspect-preserving crop and nearest-neighbor resize"
+      ],
+      "size": [
+        480,
+        640
+      ],
+      "runtimeSha256": "2b20adf9cc045013350b6498fc1e918ae09c3b8792db5a8f9e160c5adfb543e3",
+      "opaque": true,
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P02-player-v02.png",
+      "runtime": "apps/web/public/assets/generated/player.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-b2f9a976-d310-45d1-acec-ad943a576c10.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "d17c6d7f9e0298958ec3bb17b4b445ed9a1a910e390ed047e7fc8a99384b8a20",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220 (RGB dark details preserved)",
+        "visually inspected 4x2 source cells, crop each alpha bounding box",
+        "one proportional scale shared by all eight poses",
+        "bottom baseline 42 / boss 57; centered x",
+        "nearest-neighbor resize; 4x2 assembly"
+      ],
+      "frames": 8,
+      "frameSize": [
+        48,
+        48
+      ],
+      "uniqueFrames": 8,
+      "size": [
+        192,
+        96
+      ],
+      "runtimeSha256": "3dc0fc59b2ef5faa2e6a36312d16432e51da38ab8898dd549681cdd09d15e605",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        12,
+        5,
+        186,
+        91
+      ],
+      "status": "needs-fix",
+      "limitations": [
+        "Generated poses have idle foot/shape jitter and imperfect alternating stride. Technical atlas ready; animation polish and in-game playback review outstanding."
+      ]
+    },
+    {
+      "source": "art/source/P03-thug-v01.png",
+      "runtime": "apps/web/public/assets/generated/enemy-thug.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-a78a48ea-811a-4ed9-b076-396731787b8f.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "8fb4d80e9d7a5cd717de6ea71b20dbb5e764215d6d7673601a6fae87b721ad2e",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220 (RGB dark details preserved)",
+        "visually inspected 4x2 source cells, crop each alpha bounding box",
+        "one proportional scale shared by all eight poses",
+        "bottom baseline 42 / boss 57; centered x",
+        "nearest-neighbor resize; 4x2 assembly"
+      ],
+      "frames": 8,
+      "frameSize": [
+        48,
+        48
+      ],
+      "uniqueFrames": 8,
+      "size": [
+        192,
+        96
+      ],
+      "runtimeSha256": "c01e6bee659857e3c265fdb9af250566c541daec16b610f4f41a5ed729c0072a",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        8,
+        5,
+        189,
+        91
+      ],
+      "status": "needs-fix",
+      "limitations": [
+        "Generated poses have idle foot/shape jitter and imperfect alternating stride. Technical atlas ready; animation polish and in-game playback review outstanding."
+      ]
+    },
+    {
+      "source": "art/source/P04-runner-v01.png",
+      "runtime": "apps/web/public/assets/generated/enemy-runner.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-7a4c147b-0e41-41ec-bbdf-51d7a23463ee.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "51bd3cdc0c025ddcbc2667c87dab01535a7a3a17bfc874eea8c75989a72382c2",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220 (RGB dark details preserved)",
+        "visually inspected 4x2 source cells, crop each alpha bounding box",
+        "one proportional scale shared by all eight poses",
+        "bottom baseline 42 / boss 57; centered x",
+        "nearest-neighbor resize; 4x2 assembly"
+      ],
+      "frames": 8,
+      "frameSize": [
+        48,
+        48
+      ],
+      "uniqueFrames": 8,
+      "size": [
+        192,
+        96
+      ],
+      "runtimeSha256": "da53f5b8a2024be90a9b82b8ef2c913cee1d4c0261c9b609563a58e498aee1e1",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        10,
+        5,
+        188,
+        91
+      ],
+      "status": "needs-fix",
+      "limitations": [
+        "Generated poses have idle foot/shape jitter and imperfect alternating stride. Technical atlas ready; animation polish and in-game playback review outstanding."
+      ]
+    },
+    {
+      "source": "art/source/P05-brute-v01.png",
+      "runtime": "apps/web/public/assets/generated/enemy-brute.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-2d9f3552-d419-4c3e-9035-422fbc3885a9.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "5568827952d0ba6a2429c31075fc57a31cbb10c5c3b26685720b5aa2742aeda3",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220 (RGB dark details preserved)",
+        "visually inspected 4x2 source cells, crop each alpha bounding box",
+        "one proportional scale shared by all eight poses",
+        "bottom baseline 42 / boss 57; centered x",
+        "nearest-neighbor resize; 4x2 assembly"
+      ],
+      "frames": 8,
+      "frameSize": [
+        48,
+        48
+      ],
+      "uniqueFrames": 8,
+      "size": [
+        192,
+        96
+      ],
+      "runtimeSha256": "3b0ffbee19dfb950da232ed70ee187167c1ca3ebf566ef026e14d947fa2523e0",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        8,
+        6,
+        189,
+        91
+      ],
+      "status": "needs-fix",
+      "limitations": [
+        "Generated poses have idle foot/shape jitter and imperfect alternating stride. Technical atlas ready; animation polish and in-game playback review outstanding."
+      ]
+    },
+    {
+      "source": "art/source/P06-boss-v01.png",
+      "runtime": "apps/web/public/assets/generated/boss.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-a57cbd23-619c-4c2a-b687-9173c6bdd64b.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "ad45a0b35bd20383d130cc405bf6a56ef19be5eb78d9f7272a7af161d3d0d3fd",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220 (RGB dark details preserved)",
+        "visually inspected 4x2 source cells, crop each alpha bounding box",
+        "one proportional scale shared by all eight poses",
+        "bottom baseline 42 / boss 57; centered x",
+        "nearest-neighbor resize; 4x2 assembly"
+      ],
+      "frames": 8,
+      "frameSize": [
+        64,
+        64
+      ],
+      "uniqueFrames": 8,
+      "size": [
+        256,
+        128
+      ],
+      "runtimeSha256": "dcd9971489abc745c5b0ce16cc7e9b5c05d2d53dfddbdf0a56512f373a815cd6",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        10,
+        4,
+        252,
+        122
+      ],
+      "status": "needs-fix",
+      "limitations": [
+        "Generated poses have idle foot/shape jitter and imperfect alternating stride. Technical atlas ready; animation polish and in-game playback review outstanding."
+      ]
+    },
+    {
+      "source": "art/source/P07a-asphalt-v01.png",
+      "runtime": "apps/web/public/assets/generated/tile-asphalt.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-bc71cfde-8c56-44df-8d60-74eab1e4a384.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sourceMode": "RGB",
+      "sourceSha256": "32ef5fde5f2c7073863a167e2a0e768a04f041eb462304ae80191f5127cf7301",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "nearest-neighbor downsample",
+        "copy opposite edge source pixels to ensure matched boundaries"
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "runtimeSha256": "e1d29e0e32073f3045ba346a75702216b15f4a74c5ec644a03437a0b253ff5f3",
+      "opaque": true,
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P07b-sidewalk-v02.png",
+      "runtime": "apps/web/public/assets/generated/tile-sidewalk.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-fef3a1c2-10b7-4996-9fc3-de158e342953.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sourceMode": "RGB",
+      "sourceSha256": "524ad17678e6a9e21bd30252d303f40299dc6d4571359f23b146ecba4510a9ab",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "nearest-neighbor downsample",
+        "copy opposite edge source pixels to ensure matched boundaries"
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "runtimeSha256": "2361724097fa237a92068fd671100c2e8f86ba0cf3cd9f4eddc03fb56b93fec9",
+      "opaque": true,
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P07c-road-marking-v01.png",
+      "runtime": "apps/web/public/assets/generated/tile-road-marking.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-861ce368-5cc3-4ecd-8108-09c597625885.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "ceb24d63232a111fae328b29a571a2c126d66f03aa794c2d2a96ef0eb625a1c9",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "runtimeSha256": "127d770b8bfc09764b06652c9882426d73facd7fcd2dd6ac45371723f55a52f2",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        12,
+        2,
+        19,
+        30
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P08-lamp-v01.png",
+      "runtime": "apps/web/public/assets/generated/prop-lamp.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-e4af63ed-bc5b-47c0-a83e-894c7c9f6d25.png",
+      "sourceSize": [
+        1086,
+        1448
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "dfa5cd05c0ac90c41a4ae1ad85db17431aa28623376d5050a492de579424fe9b",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "align base center to x24 at bottom",
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        48,
+        64
+      ],
+      "runtimeSha256": "64730ad7b3fdfee294ff501dcf364575f5fb548a787506bb0da72f18ed0e76ea",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        7,
+        2,
+        29,
+        62
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P08-bin-v01.png",
+      "runtime": "apps/web/public/assets/generated/prop-bin.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-2ebca0b6-a6c8-4a29-abe5-8d067cb65a6c.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "3e1c0d60f4609df702a4c3975a1f402ecb9519d374d4dd835703d5f33199e86e",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "runtimeSha256": "6fcedccc76b222968943f4f430f0ab389de346ad5734bf2e5c72ceb5e6e3ccef",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        5,
+        2,
+        26,
+        30
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P08-fence-v01.png",
+      "runtime": "apps/web/public/assets/generated/prop-fence.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-71b29280-3954-4ede-8b25-e30574bc1dd6.png",
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "59ed30d2245e6c5e4397bb99d6479b46da6c3d817f148da50daf9457f16fd0b4",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        64,
+        32
+      ],
+      "runtimeSha256": "a5862ec6bdb35bb629af3f9777635956d9d6a167a9de4fbe57e2f7f11d04a192",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        2,
+        4,
+        62,
+        28
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P08-car-v01.png",
+      "runtime": "apps/web/public/assets/generated/prop-car.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-d76e8348-3559-45d6-92f3-919b306c7c31.png",
+      "sourceSize": [
+        971,
+        1619
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "e51e3f6b41da4ceaedb85fab1892ec4a591ad79767ea0431c4a09798e6c7223b",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        48,
+        80
+      ],
+      "runtimeSha256": "51a6136c82ef93c76868761340c60385b6ae4a3c64be31af90844fdfe2f6a8f0",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        4,
+        2,
+        43,
+        78
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P08-neon-v01.png",
+      "runtime": "apps/web/public/assets/generated/prop-neon.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-9d8ca212-8fc8-4297-9ca0-a6541052ec3c.png",
+      "sourceSize": [
+        1448,
+        1086
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "52a87a93bbf07f28d9e4acc965ad19d77fdd629f70d0ae0e7d7f990bee840d21",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "manual source crop x1110 y385 x1268 y630: only hanging sign",
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        64,
+        48
+      ],
+      "runtimeSha256": "c858e9f0cb63cf25888afb69b7c3987655506968cd716fc5af000fcf9565bb97",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        18,
+        2,
+        46,
+        46
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P09-money-v01.png",
+      "runtime": "apps/web/public/assets/generated/pickup-money.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-847869c8-5271-439f-ade8-7fb310c4fad7.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "dfc297948faa1a82b39f1db4fa5dabb467f49aa06e9a9c92e56090878b69fa88",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        16,
+        16
+      ],
+      "runtimeSha256": "c638b78e5ddc4afe2133eae286d3f1fd1bfa3f527b7ad3053f4ca50cf9b0b837",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        2,
+        3,
+        14,
+        13
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P09-xp-v01.png",
+      "runtime": "apps/web/public/assets/generated/pickup-xp.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-cf47e0e7-4f63-48d4-959e-0bad63216c82.png",
+      "sourceSize": [
+        1263,
+        1246
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "80c493c70ee5d9150d931d8e3b147fdea1e5efc6d65204e67695dac1f54f4f80",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        16,
+        16
+      ],
+      "runtimeSha256": "25ddca0733e2e1a9b26845f3fd6d37ee0863d835c18dbb8cec974cf461741e9c",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        2,
+        2,
+        14,
+        14
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P09-medkit-v01.png",
+      "runtime": "apps/web/public/assets/generated/pickup-medkit.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-430cce31-d642-45d8-bf9e-ca16baa5c375.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "afe3d8fda408aefd3c7fbe4fd6ffe34033f3eb9e87c1f8d9c9d5d6b14b2c8b34",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        16,
+        16
+      ],
+      "runtimeSha256": "3f3833f98c8910da1d36b5e3f255c2d0720dd5b7c1421db5e3c12633160e9ca9",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        2,
+        2,
+        14,
+        14
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P10-run-v01.png",
+      "runtime": "apps/web/public/assets/generated/icon-run.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-40d2d30c-7807-47ca-9a49-0051b750eba6.png",
+      "sourceSize": [
+        1278,
+        1230
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "12c5bb9437d8c9c190e87a19d85e2aa941ffda060fc1a6d056d6fda230189071",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        24,
+        24
+      ],
+      "runtimeSha256": "489fb62e8b602ac1a4ab6eaa0c3cc0b8a4c39dac66cadc775b683b3dc3ff5030",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        2,
+        5,
+        22,
+        19
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P10-casino-v01.png",
+      "runtime": "apps/web/public/assets/generated/icon-casino.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-b4c2edb5-469d-4273-93bf-5cc0461f17de.png",
+      "sourceSize": [
+        1262,
+        1246
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "98cfbbf7beae82740fd19c36ab460dd30ea390f47c6ed1993fb1247bbf2ba08c",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        24,
+        24
+      ],
+      "runtimeSha256": "27e5058efd483a8da2cfc370d4c71c75378a83c063bbff6850f51e2b00360dd5",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        2,
+        2,
+        21,
+        22
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P10-gang-v01.png",
+      "runtime": "apps/web/public/assets/generated/icon-gang.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-5aeab738-0321-4512-9c23-6afc431e0876.png",
+      "sourceSize": [
+        1261,
+        1247
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "130e49815eb16f9cc51a72893620f44fa1305c2d60858fbd66cef4ebe64c28ff",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        24,
+        24
+      ],
+      "runtimeSha256": "4f65e38d05c8e9526ba189a19bd04486ccda60a09e12fd8f9b41f19d6cf1f89e",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        2,
+        4,
+        22,
+        20
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P10-city-v01.png",
+      "runtime": "apps/web/public/assets/generated/icon-city.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-7ee23c0e-f066-416d-bc4f-d1ef4f9b8395.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "cf9c42399da7710927795deed26d4f3c943bb848027a9a4a45b9db9f5d0de0d0",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        24,
+        24
+      ],
+      "runtimeSha256": "343819961cc4d6756770ad82aa5b46519bd391e36aea11c7aeef745eebbc52c8",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        3,
+        2,
+        20,
+        22
+      ],
+      "status": "ready"
+    },
+    {
+      "source": "art/source/P11-rocket-v01.png",
+      "runtime": "apps/web/public/assets/generated/rocket.png",
+      "tool": "image_gen.imagegen",
+      "model": null,
+      "generationArtifact": "exec-f60d7a9c-966b-4f7b-b5ed-ed2606c11334.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sourceMode": "RGBA",
+      "sourceSha256": "c6e3fe11c9a3877b4f99d720a4270d9befc1ae10c299b265a130774add9bb91f",
+      "promptReference": "docs/art/PROMPTS.md — corresponding P task; normalized English request used in chat",
+      "processing": [
+        "alpha threshold 220; no RGB black removal",
+        "alpha-bbox crop and proportional nearest-neighbor fit; >=2px padding"
+      ],
+      "size": [
+        64,
+        64
+      ],
+      "runtimeSha256": "d4838f55b9875abd67a0780ec6ca35e1b16697dd3dceb6b51a6198eb8105483b",
+      "alphaRange": [
+        0,
+        255
+      ],
+      "contentBounds": [
+        4,
+        2,
+        60,
+        62
+      ],
+      "status": "ready"
+    }
+  ]
+}

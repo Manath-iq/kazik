@@ -1,0 +1,13 @@
+
+> street-legends@0.1.0 test
+> vitest run
+
+
+ RUN  v4.1.12 /Users/manath/myAI/kazik
+
+
+ Test Files  2 passed (2)
+      Tests  24 passed (24)
+   Start at  22:12:44
+   Duration  1.53s (transform 107ms, setup 0ms, import 460ms, tests 1.05s, environment 0ms)
+
