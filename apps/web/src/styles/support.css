@@ -1,0 +1,46 @@
+/* Night Arcade extension · locked palette/type · fullscreen + voluntary Stars support.
+   Structure: profile → one-time form → own history. No new visual system or paid gameplay. */
+.app-shell{padding-inline:var(--safe-left) var(--safe-right)}
+.game-main{padding-bottom:var(--safe-bottom)}
+:root[data-telegram-fullscreen=true] .app-shell{max-width:none;border-inline:0;box-shadow:none}
+:root[data-telegram-fullscreen=true] .desktop-note{display:none}
+:root[data-telegram-fullscreen=true] .screen{width:100%;max-width:520px;margin-inline:auto}
+.boot{min-height:var(--app-height);padding-top:calc(40px + var(--safe-top));padding-bottom:calc(40px + var(--safe-bottom))}
+.modal{inset:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);width:calc(100% - var(--safe-left) - var(--safe-right) - 24px)}
+.support-intro{display:grid;gap:12px}
+.support-intro h3{font-size:24px;line-height:1.25}
+.support-intro p,.support-boundary p{font-size:14px}
+.support-boundary strong{display:block;color:var(--gold);margin-bottom:8px}
+.support-choice{border:0;padding:0;margin:24px 0;min-width:0}
+.support-choice legend{font-size:13px;color:var(--muted);margin-bottom:12px}
+.support-amounts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.support-amounts label{display:flex;align-items:center;justify-content:center;gap:8px;min-height:76px;border:1px solid var(--line);background:var(--surface);padding:10px 6px;color:var(--text);cursor:pointer}
+.support-amounts label:has(:checked){border-color:var(--gold);background:var(--raised)}
+.support-amounts label:has(:focus-visible){outline:2px solid var(--cyan);outline-offset:3px}
+.support-amounts input,.support-consent input{width:18px;min-width:18px;height:18px;min-height:18px;padding:0;margin:0;accent-color:var(--gold)}
+.support-amounts span{display:grid;text-align:center;gap:8px}
+.support-amounts b{font-family:var(--pixel);font-size:12px;line-height:1.5}
+.support-amounts small{font-size:10px;color:var(--muted)}
+.support-choice:disabled label{cursor:not-allowed;opacity:.6}
+.support-terms{border-block:1px solid var(--line);padding-block:4px;margin-top:20px;font-size:14px;line-height:1.55}
+.support-terms summary{min-height:48px;display:list-item;align-content:center;cursor:pointer;color:var(--text)}
+.support-terms ol{padding-left:20px;margin:12px 0 16px;display:grid;gap:12px;color:var(--muted)}
+.support-terms p{margin-block:12px}
+.support-consent{display:flex;align-items:flex-start;gap:12px;min-height:44px;padding:16px 0;margin:8px 0;color:var(--text);font-size:14px;line-height:1.5;cursor:pointer}
+.support-consent input{margin-top:3px;flex-shrink:0}
+.support-status{padding:16px;border:1px solid var(--cyan);background:var(--surface);margin-block:18px;font-size:14px}
+.support-pending{display:grid;gap:12px;padding-block:16px}
+.support-pending small{overflow-wrap:anywhere;color:var(--muted)}
+.support-history{margin-top:28px;border-top:1px solid var(--line);padding-top:12px}
+.support-history-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.support-link{min-height:44px;padding:8px 0;text-decoration:underline;text-underline-offset:4px;color:var(--cyan);font-size:14px}
+.support-payment{padding:16px 0;border-top:1px solid var(--line);display:grid;gap:8px}
+.support-payment>div:first-child{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:baseline}
+.support-payment strong{font-size:17px}
+.support-payment span{font-size:12px}
+.support-payment small{grid-column:1/-1;color:var(--muted)}
+.support-payment>.support-link{justify-self:start}
+.support-refund-confirm{display:grid;gap:12px;font-size:14px;padding:16px;background:var(--surface)}
+.support-refund-confirm .pixel-button{font-size:8px}
+.support-contact{display:flex;align-items:center;min-height:44px;color:var(--cyan);font-size:14px;line-height:1.5;margin-top:16px}
+a:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}

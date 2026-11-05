@@ -1,0 +1,13 @@
+/* Full grouped dollar amounts, never silently abbreviate the new denomination to K/M. */
+.wallet-button{font-size:clamp(8px,2.4vw,11px);font-variant-numeric:tabular-nums;flex-shrink:0}
+.profile-button strong{max-width:100%}
+.result-income{flex-wrap:wrap}
+.result-income strong{font-size:clamp(12px,4.6vw,20px);overflow-wrap:anywhere;max-width:100%}
+.profile-balance{font-size:clamp(17px,5vw,24px);overflow-wrap:anywhere;max-width:100%}
+.business-claim{flex-wrap:wrap;gap:12px}
+.business-claim>strong{max-width:100%;overflow-wrap:anywhere}
+.stake-buttons{grid-template-columns:repeat(3,minmax(0,1fr))}
+.stake-buttons button{font-size:9px;min-width:0;font-variant-numeric:tabular-nums}
+.bet-panel>.row-between{flex-wrap:wrap;gap:8px}
+.history-row>strong,.history-row>b{overflow-wrap:anywhere;text-align:right;max-width:58%}
+.run-stats{font-size:11px;gap:6px}

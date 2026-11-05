@@ -1,0 +1,330 @@
+{
+  "muzzle": {
+    "source": "projectiles/muzzle-pistol",
+    "sourceWidth": 96,
+    "sourceHeight": 72,
+    "sourceOrigin": [
+      44,
+      66
+    ],
+    "sourceAnchor": [
+      0,
+      -26
+    ],
+    "crop": [
+      7,
+      8
+    ],
+    "sourceFps": 30,
+    "sampleFps": 30,
+    "sourceDuration": 1.8,
+    "playbackRate": 2,
+    "frameWidth": 80,
+    "frameHeight": 73,
+    "pivotX": 37,
+    "pivotY": 32,
+    "columns": 10,
+    "rows": 6,
+    "count": 55,
+    "fps": 60,
+    "durationMs": 916.6666666666666,
+    "sheets": [
+      {
+        "layer": "combined",
+        "file": "muzzle.png"
+      }
+    ]
+  },
+  "hit": {
+    "source": "impacts/hit-spark",
+    "sourceWidth": 136,
+    "sourceHeight": 80,
+    "sourceOrigin": [
+      44,
+      64
+    ],
+    "sourceAnchor": [
+      0,
+      -20
+    ],
+    "crop": [
+      8,
+      -1
+    ],
+    "sourceFps": 30,
+    "sampleFps": 30,
+    "sourceDuration": 0.5,
+    "playbackRate": 1.2,
+    "frameWidth": 131,
+    "frameHeight": 87,
+    "pivotX": 36,
+    "pivotY": 45,
+    "columns": 10,
+    "rows": 2,
+    "count": 16,
+    "fps": 36,
+    "durationMs": 444.4444444444444,
+    "sheets": [
+      {
+        "layer": "combined",
+        "file": "hit.png"
+      }
+    ]
+  },
+  "crit": {
+    "source": "impacts/crit-hit",
+    "sourceWidth": 216,
+    "sourceHeight": 136,
+    "sourceOrigin": [
+      84,
+      106
+    ],
+    "sourceAnchor": [
+      0,
+      -26
+    ],
+    "crop": [
+      5,
+      1
+    ],
+    "sourceFps": 30,
+    "sampleFps": 30,
+    "sourceDuration": 0.9,
+    "playbackRate": 1.5,
+    "frameWidth": 185,
+    "frameHeight": 158,
+    "pivotX": 79,
+    "pivotY": 79,
+    "columns": 10,
+    "rows": 3,
+    "count": 28,
+    "fps": 45,
+    "durationMs": 622.2222222222223,
+    "sheets": [
+      {
+        "layer": "combined",
+        "file": "crit.png"
+      }
+    ]
+  },
+  "wall": {
+    "source": "impacts/bullet-impact",
+    "sourceWidth": 152,
+    "sourceHeight": 100,
+    "sourceOrigin": [
+      116,
+      84
+    ],
+    "sourceAnchor": [
+      0,
+      -24
+    ],
+    "crop": [
+      30,
+      21
+    ],
+    "sourceFps": 30,
+    "sampleFps": 30,
+    "sourceDuration": 1.4,
+    "playbackRate": 2,
+    "frameWidth": 121,
+    "frameHeight": 78,
+    "pivotX": 86,
+    "pivotY": 39,
+    "columns": 10,
+    "rows": 5,
+    "count": 43,
+    "fps": 60,
+    "durationMs": 716.6666666666666,
+    "sheets": [
+      {
+        "layer": "combined",
+        "file": "wall.png"
+      }
+    ]
+  },
+  "death": {
+    "source": "spawn/poof",
+    "sourceWidth": 112,
+    "sourceHeight": 92,
+    "sourceOrigin": [
+      56,
+      80
+    ],
+    "sourceAnchor": [
+      0,
+      -17
+    ],
+    "crop": [
+      11,
+      13
+    ],
+    "sourceFps": 30,
+    "sampleFps": 30,
+    "sourceDuration": 1.6,
+    "playbackRate": 2.5,
+    "frameWidth": 95,
+    "frameHeight": 95,
+    "pivotX": 45,
+    "pivotY": 50,
+    "columns": 10,
+    "rows": 5,
+    "count": 49,
+    "fps": 75,
+    "durationMs": 653.3333333333334,
+    "sheets": [
+      {
+        "layer": "combined",
+        "file": "death.png"
+      }
+    ]
+  },
+  "xp": {
+    "source": "pickups/collect-burst",
+    "sourceWidth": 112,
+    "sourceHeight": 108,
+    "sourceOrigin": [
+      56,
+      94
+    ],
+    "sourceAnchor": [
+      0,
+      -30
+    ],
+    "crop": [
+      18,
+      11
+    ],
+    "sourceFps": 30,
+    "sampleFps": 30,
+    "sourceDuration": 1.35,
+    "playbackRate": 3,
+    "frameWidth": 82,
+    "frameHeight": 92,
+    "pivotX": 38,
+    "pivotY": 53,
+    "columns": 10,
+    "rows": 5,
+    "count": 42,
+    "fps": 90,
+    "durationMs": 466.6666666666667,
+    "sheets": [
+      {
+        "layer": "combined",
+        "file": "xp.png"
+      }
+    ]
+  },
+  "coin": {
+    "source": "pickups/collect-burst",
+    "sourceWidth": 112,
+    "sourceHeight": 108,
+    "sourceOrigin": [
+      56,
+      94
+    ],
+    "sourceAnchor": [
+      0,
+      -30
+    ],
+    "crop": [
+      18,
+      11
+    ],
+    "sourceFps": 30,
+    "sampleFps": 30,
+    "sourceDuration": 1.35,
+    "playbackRate": 2.5,
+    "frameWidth": 82,
+    "frameHeight": 92,
+    "pivotX": 38,
+    "pivotY": 53,
+    "columns": 10,
+    "rows": 5,
+    "count": 42,
+    "fps": 75,
+    "durationMs": 560,
+    "sheets": [
+      {
+        "layer": "combined",
+        "file": "coin.png"
+      }
+    ]
+  },
+  "heal": {
+    "source": "pickups/collect-burst",
+    "sourceWidth": 112,
+    "sourceHeight": 108,
+    "sourceOrigin": [
+      56,
+      94
+    ],
+    "sourceAnchor": [
+      0,
+      -30
+    ],
+    "crop": [
+      18,
+      11
+    ],
+    "sourceFps": 30,
+    "sampleFps": 30,
+    "sourceDuration": 1.35,
+    "playbackRate": 2.5,
+    "frameWidth": 82,
+    "frameHeight": 92,
+    "pivotX": 38,
+    "pivotY": 53,
+    "columns": 10,
+    "rows": 5,
+    "count": 42,
+    "fps": 75,
+    "durationMs": 560,
+    "sheets": [
+      {
+        "layer": "combined",
+        "file": "heal.png"
+      }
+    ]
+  },
+  "level": {
+    "source": "ui/level-up",
+    "sourceWidth": 176,
+    "sourceHeight": 138,
+    "sourceOrigin": [
+      88,
+      114
+    ],
+    "sourceAnchor": [
+      0,
+      0
+    ],
+    "crop": [
+      5,
+      -12
+    ],
+    "sourceFps": 30,
+    "sampleFps": 20,
+    "sourceDuration": 3.2,
+    "playbackRate": 2.2,
+    "frameWidth": 166,
+    "frameHeight": 185,
+    "pivotX": 83,
+    "pivotY": 126,
+    "columns": 10,
+    "rows": 7,
+    "count": 65,
+    "fps": 44,
+    "durationMs": 1477.2727272727273,
+    "sheets": [
+      {
+        "layer": "back",
+        "file": "level-back.png"
+      },
+      {
+        "layer": "front",
+        "file": "level-front.png"
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/patch-gg/pixelfx",
+  "commit": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+  "license": "MIT",
+  "sha256": {
+    "src/fx/impacts/crit-hit.js": "c6af9303f0e463051696796a5886236d91182594e1d4fadee2067b9cf82ba857",
+    "src/fx/impacts/bullet-impact.js": "aba76cf2a5a1e75b96e55ed1738d684fa9f6e74f428facf5a69613d404716072",
+    "src/fx/projectiles/muzzle-pistol.js": "895cb4834b95c0fb39f51607794037494f31eefcd7c378769de7bcb5f80b9eda",
+    "src/fx/projectiles/_lib.js": "d1211e9dc805ba6e9c0d5545bb487129305fb578bb3f3d834ae021b03a91b2e6",
+    "src/fx/spawn/poof.js": "2c67b046e2062be1503f22637df9214c0577b0373116aa42aca019b75a47122a",
+    "src/fx/ui/level-up.js": "df7b4658a505a1e9ee85c24f9c33ed353fd472286675d516e33ba5af792555a3",
+    "src/fx/ui/_lib.js": "f87956224dfa2da62ec556f73f3f1fe952b5467060d4962eb328d3649e62c5ce"
+  }
+}

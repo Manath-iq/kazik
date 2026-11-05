@@ -12,6 +12,7 @@ import { casino } from './casino';
 import { gangs,gangDetails,gangRanking } from './social';
 import { city } from './city';
 import { webhook } from './bot';
+import { support } from './support';
 export const app=new Hono<AppEnv>();
 app.use('/api/*',bodyLimit({maxSize:20000,onError:c=>c.json({error:{message:'Запрос слишком большой'}},413)}));
 app.use('/api/*',async(c,next)=>{
@@ -49,7 +50,7 @@ app.get('/api/me',async c=>{
 app.get('/api/wallet/ledger',async c=>c.json({data:(await sql(c.env.DB,'SELECT id,delta,reason,created_at FROM wallet_ledger WHERE user_id=? ORDER BY created_at DESC LIMIT 50',c.get('userId')).all()).results}));
 app.get('/api/leaderboard/players',async c=>c.json({data:(await sql(c.env.DB,`WITH ranked AS (SELECT user_id,wave,duration_seconds,ROW_NUMBER() OVER(PARTITION BY user_id ORDER BY wave DESC,duration_seconds DESC) n FROM runs WHERE status='finished' AND verification_state='guarded') SELECT u.id,u.display_name name,r.wave score,r.duration_seconds duration FROM ranked r JOIN users u ON u.id=r.user_id WHERE n=1 ORDER BY score DESC,duration DESC LIMIT 50`).all()).results}));
 app.get('/api/leaderboard/gangs',async c=>c.json({data:await gangRanking(c.env.DB)}));
-app.route('/api/runs',runs);app.route('/api/casino',casino);app.route('/api/gangs',gangs);app.route('/api',city);
+app.route('/api/runs',runs);app.route('/api/casino',casino);app.route('/api/gangs',gangs);app.route('/api',city);app.route('/api/support',support);
 app.notFound(c=>c.json({error:{message:'Маршрут не найден'}},404));
 app.onError((error,c)=>{
  if(error instanceof HTTPException)return c.json({error:{message:error.message}},error.status);

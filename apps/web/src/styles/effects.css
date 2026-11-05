@@ -1,0 +1,10 @@
+/* Bitmap sequences only; decorative and non-interactive. Text/numbers never move with the effect. */
+.pixel-burst{display:inline-block;position:relative;flex-shrink:0;pointer-events:none;vertical-align:middle}
+.pixel-burst>span{position:absolute;inset:0;background-repeat:no-repeat;image-rendering:pixelated}
+.toast.with-fx{padding-left:64px;overflow:hidden}
+.toast-fx{position:absolute;left:4px;top:50%;transform:translateY(-50%);width:54px;height:54px;display:grid;place-items:center;pointer-events:none}
+.result-wave,.result-income{position:relative;isolation:isolate}
+.result-record-fx{position:absolute;z-index:-1;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;opacity:.65}
+.result-income-fx{position:absolute;z-index:-1;right:4px;top:50%;transform:translateY(-50%);pointer-events:none;opacity:.75}
+.pause-effects{margin-bottom:18px;text-align:left}
+@media(prefers-reduced-motion:reduce){.pixel-burst{display:none}}

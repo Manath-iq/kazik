@@ -2,6 +2,22 @@
 
 ## Тестовый запуск с телефона
 
+### Обновление с fullscreen / Stars / исправлениями телефона
+
+В `wrangler.test.jsonc` владелец явно разрешил **реальные** Stars: `STARS_ENABLED="true"`, `PAYMENT_SUPPORT_USERNAME="manath"`. Бот с именем test не является платёжной sandbox. Полный контракт — `STARS.md`. Base и local configs оставляют приём выключенным. Пустой контакт/секрет также закрывает новые счета.
+
+До новой версии сохранить защищённый экспорт **только street-legends-test**, затем применить миграцию `0004_stars_support.sql`, прогнать проверки и собрать `build:test`. Существующие данные и секреты сохраняются; другие Workers/базы не затрагиваются. Не откатывать миграцию удалением платёжных записей.
+
+В webhook обязательно `allowed_updates: ["message", "pre_checkout_query"]` — одного message недостаточно для Stars. Команды `/terms`, `/support`, `/paysupport` добавлены в `tools/deploy/telegram.mjs`. Конфигурация по-прежнему не сбрасывает pending updates. Счета после остановки приёма отклоняются, но старые successful/refunded события, история и возвраты работают.
+
+Повторная настройка текущего бота при необходимости DNS workaround:
+
+```bash
+node tools/deploy/telegram.mjs configure https://street-legends-test.todominate-ai.workers.dev 172.67.160.128
+```
+
+IP передавать только после сверки актуального A-record; не считать адрес вечным. Production smoke может создать invoice технического профиля, **но не платит и не подделывает успешные платежи на удалённом боте**. Реальный handset fullscreen и полный Stars checkout/refund требуют отдельной ручной проверки.
+
 Для теста добавлен отдельный `apps/api/wrangler.test.jsonc`: Worker `street-legends-test` и собственная D1 `street-legends-test`. Entry тот же безопасный `src/index.ts`, DEV-вход не выкладывается.
 
 Frontend: https://street-legends-test.todominate-ai.workers.dev

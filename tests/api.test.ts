@@ -4,7 +4,7 @@ import { build } from 'esbuild';
 import { readFile } from 'node:fs/promises';
 import { createHmac,createHash,randomUUID } from 'node:crypto';
 import { seasonStart } from '@street/shared';
-let mf:Miniflare,prod:Miniflare,db:D1Database;
+let mf:Miniflare,prod:Miniflare,db:D1Database,correctionMigration:string;
 const botToken='test-token-not-a-real-credential';
 const digest=(s:string)=>createHash('sha256').update(s).digest('hex');
 beforeAll(async()=>{
@@ -13,10 +13,11 @@ beforeAll(async()=>{
  const options={modules:true,compatibilityDate:'2026-11-04',d1Databases:['DB'],bindings:{APP_URL:'https://example.test',BOT_USERNAME:'test_bot',ALLOWED_ORIGIN:'',BOT_TOKEN:botToken,WEBHOOK_SECRET:'test-webhook-secret'}};
  mf=new Miniflare(convertV4MiniflareOptions({...options,script:compiled.outputFiles[0].text}));prod=new Miniflare(convertV4MiniflareOptions({...options,script:production.outputFiles[0].text}));
  db=await mf.getD1Database('DB');
- const migration=(await Promise.all(['0001_initial.sql','0002_guardrails.sql','0003_run_record.sql'].map(f=>readFile(`apps/api/migrations/${f}`,'utf8')))).join('\n');
+  const migration=(await Promise.all(['0001_initial.sql','0002_guardrails.sql','0003_run_record.sql','0004_stars_support.sql'].map(f=>readFile(`apps/api/migrations/${f}`,'utf8')))).join('\n');
  // D1 exec разделяет строки: каждая завершённая SQL-команда, включая trigger, в одной строке.
  const statements=migration.replace(/--[^\n]*/g,'').split(/;\s*(?=CREATE|PRAGMA|ALTER|$)/).filter(s=>s.trim()).map(s=>s.replace(/\s+/g,' ').trim()+';');
- await db.exec(statements.join('\n'));
+  await db.exec(statements.join('\n'));
+  correctionMigration=(await readFile('apps/api/migrations/0005_run_loot_correction.sql','utf8')).replace(/--[^\n]*/g,'').trim();await db.exec(correctionMigration);
 },30000);
 afterAll(async()=>{await Promise.all([mf?.dispose(),prod?.dispose()]);});
 async function fixture(balance=10000){
@@ -127,6 +128,25 @@ describe('Реальный Workers runtime + D1',()=>{
   const u=await fixture(0),start=await req('/runs/start',u.token,{}),id=String(start.data.id);
   expect((await req(`/runs/${id}/progress`,u.token,{seq:1,seconds:1,kills:5000,money:50000,level:100,distance:100000})).status).toBe(409);
   const r=await req(`/runs/${id}/finish`,u.token,{});expect(r.data.verification_state).toBe('suspicious');expect(await wallet(u.id)).toBe(0);
+ });
+ it('27 000 принятой добычи выплачиваются полностью, а не обрезаются до 2 700',async()=>{
+  const u=await fixture(0),start=await req('/runs/start',u.token,{}),id=String(start.data.id);
+  await db.prepare('UPDATE runs SET started_at=?,last_progress_at=? WHERE id=?').bind(Date.now()-1126000,Date.now()-1126000,id).run();
+  expect((await req(`/runs/${id}/progress`,u.token,{seq:1,seconds:1125,kills:3000,money:27000,level:20,distance:1000})).status).toBe(200);
+  const result=await req(`/runs/${id}/finish`,u.token,{});expect(result.data.earned).toBe(27000);expect(await wallet(u.id)).toBe(27000);
+  await req(`/runs/${id}/finish`,u.token,{});expect(await wallet(u.id)).toBe(27000);
+ });
+ it('старую недоплату восстанавливает из принятого checkpoint один раз, suspicious/неправдоподобные не трогает',async()=>{
+  const users=await Promise.all([fixture(0),fixture(0),fixture(0)]);
+  for(let i=0;i<3;i++){
+   const u=users[i],start=await req('/runs/start',u.token,{}),id=String(start.data.id),earned=i===1?0:2700;
+   await db.prepare("UPDATE runs SET status='finished',ended_at=?,duration_seconds=1125,kills=3000,earned=?,seq=1,verification_state=?,settlement_id=? WHERE id=?").bind(Date.now(),earned,i===1?'suspicious':'guarded',randomUUID(),id).run();
+   await db.prepare('INSERT INTO run_checkpoints(run_id,seq,received_at,payload) VALUES(?,1,?,?)').bind(id,Date.now(),JSON.stringify({seq:1,seconds:1125,kills:3000,money:i===2?900000:27000,level:20,distance:1000})).run();
+   await db.prepare("INSERT INTO wallet_ledger(id,user_id,delta,reason,ref_id,created_at) VALUES(?,?,?,'run',?,?)").bind(randomUUID(),u.id,earned,id,Date.now()).run();
+  }
+  await db.exec(correctionMigration);await db.exec(correctionMigration);
+  expect(await wallet(users[0].id)).toBe(27000);expect(await wallet(users[1].id)).toBe(0);expect(await wallet(users[2].id)).toBe(2700);
+  const count=await db.prepare("SELECT COUNT(*) n FROM wallet_ledger WHERE user_id=? AND reason='run_correction'").bind(users[0].id).first<{n:number}>();expect(count!.n).toBe(1);
  });
  it('банды: замена лучшего вклада, топ-10, уход и новый сезон без сброса XP',async()=>{
   const leader=await fixture(),created=await req('/gangs',leader.token,{name:`Ночная ${randomUUID().slice(0,5)}`,tag:randomUUID().slice(0,5)});expect(created.status).toBe(200);

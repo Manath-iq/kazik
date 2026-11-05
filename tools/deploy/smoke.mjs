@@ -19,18 +19,39 @@ try{
  report.checks.health=(await fetch(`${url}/api/health`)).status;
  report.checks.privateWithoutAuth=(await fetch(`${url}/api/me`)).status;
  report.checks.devLogin=(await fetch(`${url}/api/auth/dev`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status;
+ report.checks.webhookWithoutSecret=(await fetch(`${url}/api/telegram/webhook`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({update_id:-1})})).status;
+ // Технический no-message update: проверяет shared secret без отправки сообщений пользователям.
+ report.checks.webhookWithSecret=(await fetch(`${url}/api/telegram/webhook`,{method:'POST',headers:{'Content-Type':'application/json','X-Telegram-Bot-Api-Secret-Token':secrets.WEBHOOK_SECRET},body:JSON.stringify({update_id:-1})})).status;
+ if(report.checks.webhookWithoutSecret!==403||report.checks.webhookWithSecret!==200)throw new Error('Webhook check failed');
  if(report.checks.health!==200||report.checks.privateWithoutAuth!==401||report.checks.devLogin===200)throw new Error('API gate check failed');
  browser=await chromium.launch();
  const context=await browser.newContext({viewport:{width:375,height:812},isMobile:true,hasTouch:true});
  const page=await context.newPage();page.on('pageerror',()=>report.pageErrors.push('uncaught page error'));
  await page.goto(`${url}/#${launch}`,{waitUntil:'domcontentloaded'});
  await expect(page.getByRole('button',{name:/НАЧАТЬ ВЫЛАЗКУ/})).toBeVisible({timeout:30000});
+ await page.locator('.district-scene').evaluate(async el=>{const win=el.ownerDocument.defaultView,image=new win.Image();image.src=win.getComputedStyle(el).backgroundImage.slice(5,-2);await image.decode();});
  report.checks.authenticatedLobby=true;
  await mkdir(new URL('../../test-results/',import.meta.url),{recursive:true});
  await page.screenshot({path:new URL('../../test-results/deployed-lobby-375.png',import.meta.url).pathname});
  for(const name of ['Казино','Банда','Город','Вылазка']){await page.getByRole('navigation').getByRole('button',{name,exact:true}).click();await expect(page.locator('.screen')).toBeVisible();}
  report.checks.fourTabs=true;
+ await page.getByRole('button',{name:'Открыть профиль',exact:true}).click();
+ await page.getByRole('button',{name:/ПОДДЕРЖАТЬ ИГРУ/}).click();
+ const support=page.getByRole('dialog',{name:'Поддержать игру'});
+ await expect(support.getByRole('radio')).toHaveCount(3);report.checks.starsSupportVisible=true;
+ const pay=support.getByRole('button',{name:'ПОДДЕРЖАТЬ · 25 STARS',exact:true});
+ await expect(pay).toBeDisabled();await support.getByRole('checkbox').check();
+ const invoiceResponse=page.waitForResponse(response=>response.url().endsWith('/api/support/invoices')&&response.request().method()==='POST');
+ // Создаётся только invoice технического профиля. Никакой оплаты/подтверждения/возврата
+ // на удалённом боте не имитируем, настоящие Stars агент не тратит.
+ await pay.click();const invoice=await invoiceResponse;
+ const order=(await invoice.json()).data;
+ if(invoice.status()!==200||order.stars!==25||!order.invoiceUrl?.startsWith('https://t.me/$'))throw new Error('Real Stars invoice creation failed');
+ report.checks.realStarsInvoiceCreatedWithoutPayment=true;
+ await support.getByRole('button',{name:'Закрыть',exact:true}).click();
+ await page.getByRole('dialog',{name:'Твоё досье'}).getByRole('button',{name:'Закрыть',exact:true}).click();
  await page.getByRole('button',{name:/НАЧАТЬ ВЫЛАЗКУ/}).click();await expect(page.locator('canvas')).toBeVisible({timeout:30000});
+ await expect(page.locator('.game-hint')).toHaveCount(0);report.checks.noBottomGameHint=true;
  await expect(page.locator('.run-hud strong')).toHaveText('00:02',{timeout:20000});
  await page.keyboard.down('KeyD');await expect(page.locator('.run-hud strong')).toHaveText('00:05',{timeout:10000});await page.keyboard.up('KeyD');
  await page.screenshot({path:new URL('../../test-results/deployed-run-375.png',import.meta.url).pathname});

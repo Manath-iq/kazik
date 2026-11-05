@@ -1,6 +1,6 @@
 import { HTTPException } from 'hono/http-exception';
 export function sql(db: D1Database, query: string, ...values: (string|number|null)[]) { return db.prepare(query).bind(...values); }
-export function fail(message: string, status: 400|401|403|404|409|429 = 400): never { throw new HTTPException(status, { message }); }
+export function fail(message: string, status: 400|401|403|404|409|429|503 = 400): never { throw new HTTPException(status, { message }); }
 export function ledger(db: D1Database, user: string, delta: number, reason: string, ref: string) {
  return sql(db, 'INSERT INTO wallet_ledger(id,user_id,delta,reason,ref_id,created_at) VALUES(?,?,?,?,?,?)', crypto.randomUUID(),user,delta,reason,ref,Date.now());
 }

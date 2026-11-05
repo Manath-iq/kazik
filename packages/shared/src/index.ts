@@ -1,4 +1,6 @@
 import { z } from 'zod';
+export * from './support';
+export * from './currency';
 
 export const BALANCE = {
   hp: 100, speed: 155, damage: 12, fireDelay: 850, range: 230,
@@ -76,6 +78,8 @@ export function maxSpawned(seconds: number) {
   for (let w = 1, left = seconds; left > 0; w++, left -= 30) n += Math.ceil(Math.min(30, left) * 1000 / spawnDelay(w)) + (w % 5 === 0 ? 1 : 0);
   return n;
 }
+// A sanity bound, not a payout rate. Accepted collected loot is credited in full, without a $/second haircut.
+export function runLootLimit(seconds:number,kills:number){return kills*25+Math.floor((seconds/BALANCE.waveSeconds+1)/5)*150;}
 export type RunTicket = { id: string; seed: number; startedAt: number };
 export type RunResult = { id: string; wave: number; duration_seconds: number; kills: number; earned: number; verification_state: string; gang_xp: number; is_new_record?: number };
 export type GangMember = { user_id: string; display_name: string; role: string; best_wave: number };

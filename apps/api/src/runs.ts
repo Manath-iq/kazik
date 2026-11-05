@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { BALANCE, progressSchema, seasonStart, maxSpawned } from '@street/shared';
+import { BALANCE, progressSchema, seasonStart, maxSpawned,runLootLimit } from '@street/shared';
 import type { RunProgress } from '@street/shared';
 import { sql, fail, randomInt } from './db';
 import type { AppEnv, RunRow } from './types';
@@ -11,7 +11,7 @@ export function checkProgress(run:RunRow,p:RunProgress,now:number) {
  if(dt>(now-run.last_progress_at)/1000+3) return 'Игровое время не соответствует серверному';
  if(p.kills>maxSpawned(p.seconds)+2 || p.kills-run.kills>maxSpawned(p.seconds)-maxSpawned(run.duration_seconds)+74) return 'Слишком много убийств';
  if(p.distance-run.distance>(dt+2)*BALANCE.speed*1.5) return 'Недопустимая скорость';
- if(p.money>p.kills*25+Math.floor((p.seconds/30+1)/5)*150 || p.level>1+Math.floor(p.kills*3/6)) return 'Неправдоподобный прогресс';
+ if(p.money>runLootLimit(p.seconds,p.kills) || p.level>1+Math.floor(p.kills*3/6)) return 'Неправдоподобный прогресс';
  return null;
 }
 async function getRun(db:D1Database,id:string,user:string) {
@@ -54,9 +54,9 @@ runs.post('/:id/finish',async c=>{
  if(row.status==='finished') return c.json({data:row});
  if(row.status!=='active') fail('Вылазка закрыта без выплаты',409);
  const now=Date.now(),token=crypto.randomUUID();
- const trusted=row.verification_state!=='suspicious' && now-row.last_progress_at<60000;
- // Клиентские деньги — только верхняя граница. Сервер ограничивает доход временем/спавном.
- const earned=trusted?Math.min(row.earned,Math.floor(row.duration_seconds*2.4),row.kills*25):0;
+ const trusted=row.verification_state!=='suspicious' && now-row.last_progress_at<60000 && row.earned<=runLootLimit(row.duration_seconds,row.kills);
+ // Сумма уже прошла проверки времени/спавна/убийств в checkpoint. Никакого скрытого урезания после игры.
+ const earned=trusted?row.earned:0;
  const xp=trusted && row.duration_seconds>=30?Math.min(row.wave,30):0;
  const best=await sql(db,"SELECT wave,duration_seconds FROM runs WHERE user_id=? AND status='finished' AND verification_state='guarded' ORDER BY wave DESC,duration_seconds DESC LIMIT 1",user).first<{wave:number;duration_seconds:number}>();
  const newRecord=trusted&&(!best||row.wave>best.wave||(row.wave===best.wave&&row.duration_seconds>best.duration_seconds))?1:0;
