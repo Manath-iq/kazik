@@ -7,6 +7,7 @@ import './styles/support.css';
 import './styles/effects.css';
 import './styles/currency.css';
 import './styles/game-ui.css';
+import './styles/live-casino.css';
 import { App } from './app/App';
 // Phaser lifecycle is owned by RunView; avoid a dev-only StrictMode double game mount.
 const root=createRoot(document.getElementById('root')!);

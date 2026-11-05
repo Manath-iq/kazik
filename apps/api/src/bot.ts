@@ -26,7 +26,8 @@ export async function webhook(c:Ctx) {
  const seen=await sql(db,'INSERT OR IGNORE INTO telegram_updates(id,created_at) VALUES(?,?)',update.update_id,Date.now()).run();
  if(!seen.meta.changes||!update.message?.text)return c.json({ok:true});
  const message=update.message,command=message.text!.split(/\s/)[0].split('@')[0];
- let text='STREET LEGENDS\nНочной район, вылазки и твоя банда.\nВся валюта только игровая: без покупки, вывода и переводов.';
+  const welcome=command==='/start'||command==='/play';
+  let text='<b>БОТ-БАНДИТ</b>\n<i>Твой район. Твои правила.</i>\n\nДобро пожаловать в город, где всё решают твоя банда, репутация и сила.\n\nНачни с нуля, зарабатывай игровую валюту, участвуй в вылазках и поднимайся на вершину рейтинга.\n\n⚔️ ВЫЛАЗКИ  ·  🎰 КАЗИНО\n👑 БАНДЫ  ·  🏙️ ГОРОД\n\nТолько игровая валюта — без покупки, вывода и обмена.';
   if(command==='/help')text='Двигайся — герой стреляет сам. Опыт и улучшения действуют только в вылазке.\n/play — играть\n/top — рекорды\n/gang — банда\n/terms — условия поддержки\n/paysupport — вопросы по оплате\nДоллары нельзя купить, вывести или передать. Поддержка Stars не даёт наград и не связана с казино.';
   else if(command==='/terms')text='Условия поддержки STREET LEGENDS\n\n'+SUPPORT_TERMS.join('\n\n')+'\n\nКонтакт владельца: '+(paymentSupportUrl(c.env)??'Приём Stars выключен: контакт ещё не настроен.');
   else if(command==='/paysupport'||command==='/support')text='Оплата и возвраты STREET LEGENDS\n\nВ профиле → «Поддержать игру» → история можно запросить полный возврат Stars. Если платёж не появился или возврат ожидает подтверждения, напиши владельцу: '+(paymentSupportUrl(c.env)??'Контакт пока не настроен; новые платежи недоступны.')+'\nУкажи дату, сумму и ID заказа или квитанцию Telegram. Не присылай пароль, код входа или данные карты. Поддержка Telegram не решает споры с владельцем игры.\n/terms — условия. Поддержка не пополняет игровые доллары.';
@@ -38,7 +39,7 @@ export async function webhook(c:Ctx) {
   if(member){const g=await gangDetails(db,member.gang_id);text=`[${g.tag}] ${g.name}\nОчки недели: ${g.season_score}\nОпыт банды: ${g.lifetime_xp}\nПриглашение создаёт лидер в приложении.`;}else text='Ты пока без банды. Создай свою или введи приглашение в приложении.';
  }else if(!['/start','/play'].includes(command))return c.json({ok:true});
  const url=c.env.APP_URL;
-  try{await telegramCall(c.env,'sendMessage',{chat_id:message.chat.id,text,reply_markup:{inline_keyboard:[[{text:'ИГРАТЬ',...(message.chat.type==='private'?{web_app:{url}}:{url:c.env.BOT_USERNAME?`https://t.me/${c.env.BOT_USERNAME}?startapp`:url})}]]}},z.unknown());}
-  catch{console.error(JSON.stringify({event:'telegram_send_failed',updateId:update.update_id}));}
+   try{await telegramCall(c.env,'sendMessage',{chat_id:message.chat.id,text,...(welcome?{parse_mode:'HTML'}:{}),reply_markup:{inline_keyboard:[[{text:'🎮 Начать игру',...(message.chat.type==='private'?{web_app:{url}}:{url:c.env.BOT_USERNAME?`https://t.me/${c.env.BOT_USERNAME}?start=play`:url})}]]}},z.unknown());}
+   catch{console.error(JSON.stringify({event:'telegram_send_failed',updateId:update.update_id}));await sql(db,'DELETE FROM telegram_updates WHERE id=?',update.update_id).run();return c.json({error:{message:'Повторить доставку приветствия'}},503);}
  return c.json({ok:true});
 }

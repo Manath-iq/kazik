@@ -6,7 +6,6 @@
 :root[data-telegram-fullscreen=true] .desktop-note{display:none}
 :root[data-telegram-fullscreen=true] .screen{width:100%;max-width:520px;margin-inline:auto}
 .boot{min-height:var(--app-height);padding-top:calc(40px + var(--safe-top));padding-bottom:calc(40px + var(--safe-bottom))}
-.modal{inset:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);width:calc(100% - var(--safe-left) - var(--safe-right) - 24px)}
 .support-intro{display:grid;gap:12px}
 .support-intro h3{font-size:24px;line-height:1.25}
 .support-intro p,.support-boundary p{font-size:14px}

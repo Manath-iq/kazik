@@ -19,7 +19,7 @@ type Enemy={sprite:Phaser.GameObjects.Sprite;shadow:Phaser.GameObjects.Image;hp:
 type Shot={sprite:Phaser.GameObjects.Sprite;vx:number;vy:number;damage:number;crit:boolean;life:number;bounced:boolean;lastHit:Enemy|null};
 type Loot={sprite:Phaser.GameObjects.Sprite;xp:number;money:number;heal:number;attracted:boolean;speed:number};
 type Floating={text:Phaser.GameObjects.Text;y:number;until:number;duration:number};
-export type SceneHooks={hud:(h:Hud)=>void;upgrade:(ids:UpgradeId[])=>void;pause:()=>void;death:()=>void};
+export type SceneHooks={hud:(h:Hud)=>void;upgrade:(ids:UpgradeId[])=>void;pause:()=>void;death:()=>void;ready?:()=>void};
 export class StreetScene extends Phaser.Scene {
  model=new RunModel(); pausedRun=false; finished=false; private rng:()=>number;
  private reducedMotion=reducedMotion();private effects!:StreetEffects;
@@ -79,8 +79,9 @@ export class StreetScene extends Phaser.Scene {
   document.addEventListener('visibilitychange',this.onHidden);window.addEventListener('blur',this.onHidden);
    this.scale.on('resize',this.resizeWorld,this);
    const stopEffectsSettings=subscribeEffects(()=>{this.reducedMotion=reducedMotion();});
-   this.events.once('shutdown',()=>{document.removeEventListener('visibilitychange',this.onHidden);window.removeEventListener('blur',this.onHidden);this.scale.off('resize',this.resizeWorld,this);stopEffectsSettings();this.effects.destroy();this.held.clear();this.grid.clear();});
-  this.sendHud();
+    this.events.once('shutdown',()=>{document.removeEventListener('visibilitychange',this.onHidden);window.removeEventListener('blur',this.onHidden);this.scale.off('resize',this.resizeWorld,this);stopEffectsSettings();this.effects.destroy();this.held.clear();this.grid.clear();});
+   this.sendHud();
+   this.game.events.once(Phaser.Core.Events.POST_RENDER,()=>this.hooks.ready?.());
  }
   private resetStick(){this.pointerId=null;this.stickX=0;this.stickY=0;this.joyBase?.setVisible(false);this.joyKnob?.setVisible(false);}
   startReview(mode:string){
@@ -153,7 +154,7 @@ export class StreetScene extends Phaser.Scene {
  }
  private hurtEnemy(e:Enemy,shot:Shot){
    const damage=shot.damage;
-   e.hp-=damage;e.flashUntil=this.model.seconds*1000+100;e.sprite.setTintFill(0xe7edf5);
+    e.hp-=damage;e.flashUntil=this.model.seconds*1000+100;e.sprite.setTintFill(0xe7edf5);haptic('attack');
   this.fx(shot.crit?'crit':'hit',shot.sprite.x,shot.sprite.y,{angle:Math.atan2(shot.vy,shot.vx),depth:e.sprite.y+1});this.float(`${shot.crit?'КРИТ ':''}${Math.round(damage)}`,e.sprite.x,e.sprite.y-30,shot.crit?'#FFCA3A':'#E7EDF5');
   if(e.hp>0)return;
   this.model.kills++;this.fx('death',e.sprite.x,e.sprite.y-18,{scale:e.kind===3?1.4:1,depth:e.sprite.y+1});const cfg=ENEMIES[e.kind];
@@ -207,7 +208,7 @@ export class StreetScene extends Phaser.Scene {
      else if(now<e.flashUntil){if(sprite.anims.isPlaying)sprite.stop();sprite.setFrame(6);}
      else{if(e.dashUntil-m.seconds<=.65)sprite.clearTint();if(!sprite.anims.isPlaying)sprite.play(`${e.key}-run`);else if(sprite.anims.isPaused)sprite.anims.resume();}
     }
-    if(Math.hypot(this.hero.x-sprite.x,this.hero.y-sprite.y)<(e.kind===3?29:20)&&now>=e.hitAt&&now>=this.invulnerableUntil&&!this.obstacles.some(r=>segmentRectTime(sprite.x,sprite.y+HERO_BODY.offsetY,this.hero.x,this.hero.y+HERO_BODY.offsetY,r)<Infinity)){e.hitAt=now+1000;this.invulnerableUntil=now+550;m.hit(ENEMIES[e.kind].damage);haptic();sound('hit');}
+     if(Math.hypot(this.hero.x-sprite.x,this.hero.y-sprite.y)<(e.kind===3?29:20)&&now>=e.hitAt&&now>=this.invulnerableUntil&&!this.obstacles.some(r=>segmentRectTime(sprite.x,sprite.y+HERO_BODY.offsetY,this.hero.x,this.hero.y+HERO_BODY.offsetY,r)<Infinity)){e.hitAt=now+1000;this.invulnerableUntil=now+550;m.hit(ENEMIES[e.kind].damage);haptic('damage');sound('hit');}
    // Вне экрана враги остаются в симуляции; очень далёких возвращаем к границе, не добавляя убийства.
     if(dist>1600){sprite.x=this.hero.x+Math.sign(vx)*-400;sprite.y=this.hero.y+(this.rng()-0.5)*700;sprite.y+=HERO_BODY.offsetY;unstickBody(sprite,halfWidth,halfHeight,this.obstacles);sprite.y-=HERO_BODY.offsetY;}
    }
@@ -248,7 +249,7 @@ export class StreetScene extends Phaser.Scene {
    }this.loot.length=remaining;
    if(collectedXp)this.fx('xp',this.hero.x-9,this.hero.y-20);
    if(collectedMoney)this.fx('coin',this.hero.x+9,this.hero.y-14);
-   if(this.pickupMoney&&now>=this.pickupFeedbackAt){this.float(`+$${formatGameMoney(this.pickupMoney)}`,this.hero.x,this.hero.y-20,'#FFCA3A');this.pickupMoney=0;this.pickupFeedbackAt=now+100;haptic();sound('pickup');}
+    if(this.pickupMoney&&now>=this.pickupFeedbackAt){this.float(`+$${formatGameMoney(this.pickupMoney)}`,this.hero.x,this.hero.y-20,'#FFCA3A');this.pickupMoney=0;this.pickupFeedbackAt=now+100;haptic('coin');sound('pickup');}
    if(healed){this.fx('heal',0,-20,{follow:this.hero});this.float(`+${healed} HP`,this.hero.x,this.hero.y-24,'#FF6575');}
    let liveFloats=0;
    for(const value of this.floats){const left=value.until-now;if(left<=0){value.text.setActive(false).setVisible(false);this.floatPool.push(value.text);continue;}value.text.setAlpha(left/value.duration).setY(value.y-(this.reducedMotion?0:24*(1-left/value.duration)));this.floats[liveFloats++]=value;}

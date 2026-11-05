@@ -17,8 +17,13 @@ JSON: `{data: ...}` либо `{error:{message,details?}}`. Русские оши
 
 ## Казино
 - GET `/api/casino/games`, `/api/casino/history`.
-- POST `/api/casino/roulette/spin` `{key:uuid,stake,choice}`. choice red/black/zero или число 0–36.
-- POST `/api/casino/crash/start` `{key:uuid,stake}`.
+- GET `/api/casino/live/:game/state` — общий round/serverNow, своя текущая/предыдущая ставка, баланс. game: roulette/crash.
+- POST `/api/casino/live/:game/bet` `{key:uuid,roundId:uuid,stake,choice?}`. choice red/black/zero/0–36 обязателен только для roulette. Одна подтверждённая ставка на roundId.
+- POST `/api/casino/live/crash/cashout` `{betId,roundId}` — коэффициент/выплата только серверные.
+- POST `/api/casino/live/:game/ticket` `{}` → одноразовый ticket (30с).
+- GET `/api/casino/live/:game/socket?ticket=...` — WS upgrade, проверка Origin, общие round events; только ping/pong от клиента. Нет session token в URL.
+- GET `/api/casino/live/:game/history` — 30 своих ставок.
+- Старые POST `/api/casino/roulette/spin`, `/api/casino/crash/start`: новые игры запрещены (409), прежние idempotent retries сохранены.
 - GET `/api/casino/crash/:id` — без секретной точки активного раунда.
 - POST `/api/casino/crash/:id/cashout` `{}` — коэффициент рассчитывает сервер.
 - POST `/api/casino/blackjack/start` `{key:uuid,stake}`.
@@ -41,7 +46,7 @@ JSON: `{data: ...}` либо `{error:{message,details?}}`. Русские оши
 - POST `/api/businesses/claim` `{itemId}`.
 
 ## Бот и служебное
-- POST `/api/telegram/webhook` — официальный Telegram update + `X-Telegram-Bot-Api-Secret-Token`; команды start/play/top/gang/help. Update ID дедуплицируется до отправки: при сетевом сбое отдельный ответ бота может потеряться, но не запускает денежные операции.
+- POST `/api/telegram/webhook` — официальный Telegram update + `X-Telegram-Bot-Api-Secret-Token`; команды start/play/top/gang/help. Update ID дедуплицируется; при ошибке отправки резерв команды снимается и HTTP 503 просит Telegram повторить доставку. Денежные события используют отдельную идемпотентность.
 - GET `/api/health` — без авторизации.
 
 POST действия с авторизацией — до 90/минуту/игрок. Ограничение тела 20KB. До публичного запуска дополнительно ограничить pre-auth/IP-abuse на уровне Cloudflare: встроенный app rate-limit не защищает свободный `/auth/telegram` от исчерпания бесплатной квоты валидными повторными логинами.

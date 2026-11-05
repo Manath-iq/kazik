@@ -2,10 +2,13 @@ import { app } from './app';
 import { expireRound } from './casino';
 import { sql } from './db';
 import type { Bindings,RoundRow } from './types';
+export { CasinoRoom } from './live-casino';
 export default {
  fetch:app.fetch,
  async scheduled(_event:ScheduledController,env:Bindings) {
   const now=Date.now();
+  // Watchdog also provisions empty rooms; phase alarms run independently thereafter.
+  await Promise.allSettled((['roulette','crash'] as const).map(game=>env.CASINO_ROOMS.getByName(`public-v1:${game}`).ensure(game)));
   // До 42 обращений D1: Free допускает 50 на invocation (batch считается одним).
   const expired=(await sql(env.DB,"SELECT * FROM casino_rounds WHERE status='active' AND expires_at<=? LIMIT 20",now).all<RoundRow>()).results;
   for(const round of expired)try{await expireRound(env.DB,round);}catch(error){console.warn(JSON.stringify({event:'expiry_retry',id:round.id,message:String(error).slice(0,150)}));}

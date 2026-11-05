@@ -1,0 +1,19 @@
+{
+  "verifiedAt": "2026-11-05T21:59:42.190Z",
+  "sandbox": "v0.1.1",
+  "commit": "e9654cab644145521e754004de220aa4ed0f3ad1",
+  "profile": 1,
+  "raw": 6262,
+  "gzip": 2885,
+  "quickjs": true,
+  "validatorDiagnostics": 0,
+  "realTap": true,
+  "syntheticBlocked": true,
+  "noSdkSafe": true,
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "publicSendWidget": "404 Not Found; disabled",
+  "launch": "start=play → inline web_app; BotFather Main Mini App not configured"
+}

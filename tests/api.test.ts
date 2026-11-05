@@ -8,12 +8,12 @@ let mf:Miniflare,prod:Miniflare,db:D1Database,correctionMigration:string;
 const botToken='test-token-not-a-real-credential';
 const digest=(s:string)=>createHash('sha256').update(s).digest('hex');
 beforeAll(async()=>{
- const compiled=await build({entryPoints:['apps/api/src/local.ts'],bundle:true,format:'esm',platform:'browser',write:false,target:'es2022'});
- const production=await build({entryPoints:['apps/api/src/index.ts'],bundle:true,format:'esm',platform:'browser',write:false,target:'es2022'});
- const options={modules:true,compatibilityDate:'2026-11-04',d1Databases:['DB'],bindings:{APP_URL:'https://example.test',BOT_USERNAME:'test_bot',ALLOWED_ORIGIN:'',BOT_TOKEN:botToken,WEBHOOK_SECRET:'test-webhook-secret'}};
+  const compiled=await build({entryPoints:['apps/api/src/local.ts'],bundle:true,format:'esm',platform:'browser',write:false,target:'es2022',external:['cloudflare:workers']});
+  const production=await build({entryPoints:['apps/api/src/index.ts'],bundle:true,format:'esm',platform:'browser',write:false,target:'es2022',external:['cloudflare:workers']});
+  const options={modules:true,compatibilityDate:'2026-11-04',d1Databases:['DB'],durableObjects:{CASINO_ROOMS:{className:'CasinoRoom',useSQLite:true}},bindings:{APP_URL:'https://example.test',BOT_USERNAME:'test_bot',ALLOWED_ORIGIN:'',BOT_TOKEN:botToken,WEBHOOK_SECRET:'test-webhook-secret'}};
  mf=new Miniflare(convertV4MiniflareOptions({...options,script:compiled.outputFiles[0].text}));prod=new Miniflare(convertV4MiniflareOptions({...options,script:production.outputFiles[0].text}));
  db=await mf.getD1Database('DB');
-  const migration=(await Promise.all(['0001_initial.sql','0002_guardrails.sql','0003_run_record.sql','0004_stars_support.sql'].map(f=>readFile(`apps/api/migrations/${f}`,'utf8')))).join('\n');
+   const migration=(await Promise.all(['0001_initial.sql','0002_guardrails.sql','0003_run_record.sql','0004_stars_support.sql','0006_shared_casino.sql'].map(f=>readFile(`apps/api/migrations/${f}`,'utf8')))).join('\n');
  // D1 exec разделяет строки: каждая завершённая SQL-команда, включая trigger, в одной строке.
  const statements=migration.replace(/--[^\n]*/g,'').split(/;\s*(?=CREATE|PRAGMA|ALTER|$)/).filter(s=>s.trim()).map(s=>s.replace(/\s+/g,' ').trim()+';');
   await db.exec(statements.join('\n'));
@@ -34,6 +34,12 @@ async function req(path:string,token?:string,body?:unknown,server=mf){
  const json=await response.json() as {data:Record<string,unknown>;error?:{message:string}};return {status:response.status,...json};
 }
 async function wallet(user:string){return (await db.prepare('SELECT balance FROM wallets WHERE user_id=?').bind(user).first<{balance:number}>())!.balance;}
+async function legacyCrashFixture(user:string){
+ const id=randomUUID(),now=Date.now();await db.batch([
+  db.prepare("INSERT INTO casino_rounds(id,user_id,game_type,stake,status,state,request_hash,started_at,expires_at) VALUES(?,?,'crash',100,'active',?,'legacy',?,?)").bind(id,user,JSON.stringify({point:100}),now,now+46000),
+  db.prepare("INSERT INTO wallet_ledger(id,user_id,delta,reason,ref_id,created_at) VALUES(?,?,-100,'casino_stake',?,?)").bind(randomUUID(),user,id,now),
+ ]);return id;
+}
 async function blackjackFixture(user:{id:string;token:string},state:{player:number[];dealer:number[];deck:number[]},expired=false){
  const id=randomUUID(),now=Date.now();
  await db.batch([
@@ -62,22 +68,20 @@ describe('Реальный Workers runtime + D1',()=>{
   expect(rows.filter(r=>r.status===200)).toHaveLength(1);expect(await wallet(u.id)).toBeGreaterThanOrEqual(0);
   const all=await db.prepare('SELECT SUM(delta) amount FROM wallet_ledger WHERE user_id=?').bind(u.id).first<{amount:number}>();expect(await wallet(u.id)).toBe(all!.amount);
  });
- it('рулетка платит по серверному числу и повтор ключа не меняет кошелёк',async()=>{
-  const u=await fixture(),body={key:randomUUID(),stake:50,choice:'zero'};
-  const first=await req('/casino/roulette/spin',u.token,body);expect(first.status).toBe(200);const balance=await wallet(u.id);
-  expect((await req('/casino/roulette/spin',u.token,body)).data).toMatchObject({id:body.key,number:first.data.number,payout:first.data.payout});expect(await wallet(u.id)).toBe(balance);
-  expect((await req('/casino/roulette/spin',u.token,{...body,stake:100})).status).toBe(409);
-  const other=await fixture();expect((await req('/casino/roulette/spin',other.token,body)).status).toBe(409);
+  it('старые клиенты не могут запускать индивидуальную рулетку/Crash',async()=>{
+   const u=await fixture(),body={key:randomUUID(),stake:50,choice:'zero'};
+   expect((await req('/casino/roulette/spin',u.token,body)).status).toBe(409);
+   expect((await req('/casino/crash/start',u.token,{key:randomUUID(),stake:50})).status).toBe(409);expect(await wallet(u.id)).toBe(10000);
  });
  it('crash не раскрывает точку и платит cashout только один раз по серверному времени',async()=>{
-  const u=await fixture(),key=randomUUID();const start=await req('/casino/crash/start',u.token,{key,stake:100});expect(start.status).toBe(200);expect(start.data).not.toHaveProperty('crash_point');expect(start.data).not.toHaveProperty('state');
+   const u=await fixture(),key=await legacyCrashFixture(u.id);const start=await req(`/casino/crash/${key}`,u.token);expect(start.status).toBe(200);expect(start.data).not.toHaveProperty('crash_point');expect(start.data).not.toHaveProperty('state');
   await db.prepare('UPDATE casino_rounds SET state=?,started_at=? WHERE id=?').bind(JSON.stringify({point:100}),Date.now()-1000,key).run();
   const outputs=await Promise.all([req(`/casino/crash/${key}/cashout`,u.token,{multiplier:999999}),req(`/casino/crash/${key}/cashout`,u.token,{multiplier:999999})]);
   const out=outputs.find(r=>r.status===200)!;expect(out).toBeDefined();expect(Number(out.data.payout)).toBeLessThan(120);const balance=await wallet(u.id);
   await req(`/casino/crash/${key}/cashout`,u.token,{});expect(await wallet(u.id)).toBe(balance);
  });
  it('crash после точки/тайм-аута проигрывает, refresh не спасает ставку',async()=>{
-  const u=await fixture(),key=randomUUID();await req('/casino/crash/start',u.token,{key,stake:100});
+   const u=await fixture(),key=await legacyCrashFixture(u.id);
   await db.prepare('UPDATE casino_rounds SET state=?,started_at=?,expires_at=? WHERE id=?').bind(JSON.stringify({point:1.1}),Date.now()-10000,Date.now()-1,key).run();
   const r=await req(`/casino/crash/${key}`,u.token);expect(r.data.status).toBe('finished');expect(r.data.payout).toBe(0);expect(await wallet(u.id)).toBe(9900);
   const other=await fixture();expect((await req(`/casino/crash/${key}/cashout`,other.token,{})).status).toBe(404);

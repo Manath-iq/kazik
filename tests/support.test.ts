@@ -19,9 +19,9 @@ const outbound:V4FetchHandler=async request=>{
  return MockResponse.json({ok:true,result:method==='createInvoiceLink'?`https://t.me/$test_${body.payload}`:true});
 };
 beforeAll(async()=>{
- const compiled=await build({entryPoints:['apps/api/src/index.ts'],bundle:true,format:'esm',platform:'browser',write:false,target:'es2022'});
+  const compiled=await build({entryPoints:['apps/api/src/index.ts'],bundle:true,format:'esm',platform:'browser',write:false,target:'es2022',external:['cloudflare:workers']});
  const bindings={APP_URL:'https://example.test',BOT_USERNAME:'support_test_bot',ALLOWED_ORIGIN:'',BOT_TOKEN:'not-a-real-bot-token',WEBHOOK_SECRET:secret,PAYMENT_SUPPORT_USERNAME:'manath',STARS_ENABLED:'true'};
- const options={modules:true,compatibilityDate:'2026-11-04',d1Databases:['DB'],script:compiled.outputFiles[0].text,outboundService:outbound};
+  const options={modules:true,compatibilityDate:'2026-11-04',d1Databases:['DB'],durableObjects:{CASINO_ROOMS:{className:'CasinoRoom',useSQLite:true}},script:compiled.outputFiles[0].text,outboundService:outbound};
  mf=new Miniflare(convertV4MiniflareOptions({...options,bindings}));
  disabled=new Miniflare(convertV4MiniflareOptions({...options,bindings:{...bindings,STARS_ENABLED:'false'}}));
  db=await mf.getD1Database('DB');offDb=await disabled.getD1Database('DB');
@@ -155,10 +155,16 @@ describe('Stars: настоящий Workers + D1, только транспор�
   const event={update_id:++counter,message:payment(u,body.key,charge)};expect((await hook(event)).status).toBe(500);
   await db.exec('DROP TRIGGER test_failure;');expect((await hook(event)).status).toBe(200);expect((await req<SupportInfo>('/support',u.token)).data.history[0].status).toBe('paid');
  });
- it('условия, /support и /paysupport доступны в боте без платёжного согласия',async()=>{
+  it('условия, /support и /paysupport доступны в боте без платёжного согласия',async()=>{
   const u=await fixture();for(const text of ['/terms','/support','/paysupport'])expect((await hook({message:{chat:{id:u.payer,type:'private'},from:{id:u.payer},text}})).status).toBe(200);
-  expect(calls.filter(c=>c.method==='sendMessage')).toHaveLength(3);expect(calls.every(c=>String(c.body.text).includes('https://t.me/manath'))).toBe(true);
- });
+   expect(calls.filter(c=>c.method==='sendMessage')).toHaveLength(3);expect(calls.every(c=>String(c.body.text).includes('https://t.me/manath'))).toBe(true);
+  });
+  it('/start сохраняет рабочий WebApp fallback и повторяет доставку после сбоя Bot API',async()=>{
+   const u=await fixture(),event={update_id:++counter,message:{chat:{id:u.payer,type:'private'},from:{id:u.payer},text:'/start play'}};
+   failure='sendMessage';expect((await hook(event)).status).toBe(503);failure='';expect((await hook(event)).status).toBe(200);expect((await hook(event)).status).toBe(200);
+   const sent=calls.filter(c=>c.method==='sendMessage');expect(sent).toHaveLength(2);expect(sent[1].body.text).toContain('<b>БОТ-БАНДИТ</b>');expect(sent[1].body.parse_mode).toBe('HTML');
+   expect(sent[1].body.reply_markup).toMatchObject({inline_keyboard:[[{text:'🎮 Начать игру',web_app:{url:'https://example.test'}}]]});expect(calls.some(c=>c.method==='sendWidget')).toBe(false);
+  });
  it('БД запрещает переписать цену/владельца платежа и отменить подтверждённый возврат',async()=>{
   const f=await paidFixture();await expect(db.prepare('UPDATE star_orders SET stars=250 WHERE id=?').bind(f.order).run()).rejects.toThrow(/star_order_immutable/);
   await expect(db.prepare('UPDATE star_payments SET stars=250 WHERE charge_id=?').bind(f.charge).run()).rejects.toThrow(/star_payment_immutable/);

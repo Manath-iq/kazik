@@ -170,8 +170,12 @@ html,body,#root{overflow:hidden}
 .game-ui .pause-effects .toggle-row{margin-top:0}
 
 /* Native dialogs keep focus/escape behavior. Only these secondary surfaces can scroll. */
-.game-ui .modal{padding:16px;max-height:calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 24px);overscroll-behavior:contain;overflow:hidden}
-.game-ui .modal[open]{display:flex;flex-direction:column;gap:12px}
+.game-ui .modal{--dialog-side:max(16px,calc(var(--safe-left) + 16px),calc(var(--safe-right) + 16px));position:fixed;inset:calc(var(--safe-top) + 16px) 0 calc(var(--safe-bottom) + 16px);margin:auto;width:calc(100% - 2 * var(--dialog-side));max-width:440px;min-width:0;padding:16px;max-height:calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 32px);overscroll-behavior:contain;overflow:hidden}
+.game-ui .modal[open]{display:flex;flex-direction:column;gap:12px;animation:dialog-enter 160ms cubic-bezier(.2,.8,.2,1) both}
+.game-ui .modal::backdrop{background:#030609cc;animation:dialog-dim 160ms linear both}
+@keyframes dialog-enter{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+@keyframes dialog-dim{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.game-ui .modal[open],.game-ui .modal::backdrop{animation:none}}
 .game-ui .modal-head{margin:0;padding-bottom:12px;border-bottom:1px solid var(--line);flex-shrink:0}
 .game-ui .modal-head h2{min-width:0;overflow-wrap:anywhere;font-size:12px}
 .modal-body{min-height:0;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:12px;padding:2px 3px 4px}

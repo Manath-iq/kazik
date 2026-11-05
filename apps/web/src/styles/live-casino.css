@@ -1,0 +1,46 @@
+/* Night Arcade extension · same palette · compact multiplayer controls.
+   Critique: show 5 / fit 5 / hierarchy 4 / specificity 5 / restraint 5 / variety 4. */
+.live-phase{display:flex;align-items:center;gap:8px;min-height:24px;flex-shrink:0;font-size:11px;line-height:1.3;font-variant-numeric:tabular-nums}
+.live-phase strong{flex:1;font-weight:600}.live-phase>span:last-child{color:var(--gold);font-weight:700}
+.connection-dot{height:6px;width:6px;background:var(--coral);flex-shrink:0}.connection-dot.online{background:var(--lime)}
+.game-ui .live-board{padding:8px;position:relative;overflow:hidden}
+.live-wheel-stage{min-height:0}.game-ui .live-wheel-stage .roulette-wheel{transition:none}
+.game-ui .wheel-number.winner{color:var(--bg);background:var(--gold);outline:3px solid var(--gold);font-weight:700}
+.wheel-outcome{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;min-width:64px;min-height:64px;border:2px solid var(--gold);background:var(--bg);font:24px/1.3 var(--pixel);color:var(--text)}
+.wheel-outcome.red{color:var(--coral)}.wheel-outcome.zero{color:var(--lime)}
+.live-space{flex:1;min-height:0;position:relative;overflow:hidden;background:#080d20}
+.live-space canvas{position:absolute;width:100%;height:100%;inset:0;image-rendering:pixelated}
+.game-ui .live-space .crash-value{position:absolute;top:14%;left:0;right:0;text-align:center;font-size:clamp(23px,7vw,36px);line-height:1.5;color:var(--text);font-variant-numeric:tabular-nums}
+.game-ui .live-space.crashed .crash-value{color:var(--coral)}
+.space-caption{position:absolute;top:45%;left:0;right:0;text-align:center;color:var(--muted);font:8px/1.7 var(--pixel)}
+.recent-results{display:flex;gap:6px;overflow:hidden;min-height:20px;flex-shrink:0;align-items:center;font:700 11px/1.2 Arial,Helvetica,sans-serif;font-variant-numeric:tabular-nums}
+.recent-results>span{padding:3px 5px;background:var(--surface);color:var(--muted);white-space:nowrap}.recent-results>span:first-child{color:var(--gold)}
+.game-ui .live-controls{gap:8px}.live-choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.live-choices button{min-height:44px;font:700 12px/1.2 Arial,Helvetica,sans-serif;border:1px solid var(--line);background:var(--surface);padding:4px}
+.live-choices button[aria-pressed=true]{outline:1px solid var(--gold);outline-offset:-2px;color:var(--gold)}
+.live-choices .red{border-bottom:3px solid var(--coral)}.live-choices .zero{border-bottom:3px solid var(--lime)}
+.live-stakes{display:grid;gap:6px}.quick-stakes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.quick-stakes button{border:1px solid var(--line);background:var(--surface);padding:4px;min-height:44px;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.quick-stakes button[aria-pressed=true]{border-color:var(--gold);background:var(--raised);color:var(--gold)}
+.stake-entry{display:grid;grid-template-columns:minmax(0,1fr) 108px;gap:8px;align-items:end}
+.stake-entry label{font-size:11px;line-height:1.3;display:flex;align-items:center;gap:8px;white-space:nowrap;background:var(--surface);border:1px solid var(--line);padding-left:10px}
+.stake-entry input{margin:0;background:none;border:0;min-height:44px;padding:8px 6px;font-size:18px;color:var(--gold);font-weight:700;font-variant-numeric:tabular-nums}
+.stake-entry input::-webkit-inner-spin-button{appearance:none}
+.all-in{min-height:46px;border:1px solid var(--gold);color:var(--gold);font:9px/1.5 var(--pixel);background:var(--surface);padding:8px 4px}
+.game-ui .casino-screen>.virtual-notice{flex-shrink:0;margin-top:-4px}
+.casino-loading{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;min-height:100px;color:var(--muted);font-size:14px}
+/* 1.4s is a status pulse while connecting, not a delayed interaction/entrance. */
+.loading-pixels{font-size:28px;color:var(--lime);animation:pixel-breathe 1.4s steps(3,end) infinite}
+.run-loading{position:absolute;inset:0;z-index:55;display:grid;place-items:center;padding:24px;background:var(--inset);animation:pixel-arrive 160ms ease-out both;opacity:1;transition:opacity 180ms ease-out}
+.run-loading:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 30px,#34415414 30px 32px),repeating-linear-gradient(0deg,transparent 0 30px,#34415414 30px 32px);pointer-events:none}
+.loading-scene{position:relative;display:grid;justify-items:center;gap:24px;max-width:320px;text-align:center}.loading-scene h2{font:12px/1.8 var(--pixel);color:var(--lime)}
+.loading-scene .loading-track{width:180px}.run-loading.scene-ready{opacity:0;pointer-events:none;visibility:hidden;transition:opacity 180ms ease-out,visibility 0s 180ms}
+.run-view .game-stage{opacity:0;transition:opacity 180ms ease-out}.run-view.is-ready .game-stage{opacity:1}
+.screen-switch{animation:pixel-arrive 140ms ease-out both}
+@keyframes pixel-arrive{from{opacity:.7;transform:scale(.995)}to{opacity:1;transform:scale(1)}}
+@keyframes pixel-breathe{50%{opacity:.4}}
+button{ -webkit-tap-highlight-color:transparent}
+.game-ui button:active:not(:disabled){transform:scale(.98)}
+@container (max-height:500px){.game-ui .arcade-screen.casino-screen{gap:8px}.game-ui .casino-result{min-height:24px;font-size:12px}.recent-results{display:none}.game-ui .live-controls{gap:6px}}
+@container (max-height:380px){.live-phase{font-size:10px}.game-ui .live-space .crash-value{font-size:24px}.space-caption{font-size:7px}.game-ui .live-board{min-height:60px}.game-ui .live-board .wheel-number{display:none}.game-ui .live-board .wheel-center span{font-size:16px}.game-ui .casino-screen>.virtual-notice{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.run-loading,.run-view .game-stage,.screen-switch,.loading-pixels{animation:none;transition:none}.run-loading.scene-ready{transition:none}.game-ui button:active:not(:disabled){transform:none}}

@@ -21,3 +21,4 @@ export async function login() {
  throw new Error('Открой STREET LEGENDS из кнопки «Играть» в Telegram-боте.');
 }
 export const isDev=()=>import.meta.env.DEV&&!tg()?.initData;
+export function casinoSocketUrl(game:string,ticket:string){const url=new URL(`${base}/api/casino/live/${game}/socket`,location.href);url.protocol=url.protocol==='https:'?'wss:':'ws:';url.searchParams.set('ticket',ticket);return url.toString();}

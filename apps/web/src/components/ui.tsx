@@ -2,6 +2,7 @@ import { useEffect,useRef,useState } from 'react';
 import type { ReactNode,ButtonHTMLAttributes } from 'react';
 import { assetUrl,hasArt } from '../app/art';
 import { hasUtilityIcon,UtilityIcon } from './UtilityIcon';
+import { haptic } from '../app/haptics';
 export { formatGameMoney as money,formatNumber as numberText } from '@street/shared';
 export const time=(s:number)=>`${Math.floor(s/60).toString().padStart(2,'0')}:${Math.floor(s%60).toString().padStart(2,'0')}`;
 export function Button({children,secondary=false,...props}:ButtonHTMLAttributes<HTMLButtonElement>&{secondary?:boolean}){
@@ -17,7 +18,7 @@ export function Icon({name,size=24}:{name:string;size?:number}){
 export function Panel({children,className=''}:{children:ReactNode;className?:string}){return <section className={`panel ${className}`}>{children}</section>;}
 export function Modal({title,onClose,children}:{title:string;onClose:()=>void;children:ReactNode}){
  const ref=useRef<HTMLDialogElement>(null);
- useEffect(()=>{const el=ref.current;el?.showModal();return ()=>el?.close();},[]);
+  useEffect(()=>{const el=ref.current;el?.showModal();haptic('modal');return ()=>el?.close();},[]);
   return <dialog ref={ref} className="modal" aria-label={title} onCancel={e=>{e.preventDefault();onClose();}}>
   <header className="modal-head"><h2>{title}</h2><button className="icon-button" aria-label="Закрыть" onClick={onClose}><Icon name="close" size={20}/></button></header><div className="modal-body">{children}</div>
  </dialog>;

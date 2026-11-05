@@ -3,6 +3,7 @@ import { Hono } from 'hono';
 import { app } from './app';
 import { createSession } from './auth';
 import type { AppEnv } from './types';
+export { CasinoRoom } from './live-casino';
 const local = new Hono<AppEnv>();
 local.post('/api/auth/dev',async c=>{
  const host=new URL(c.req.url).hostname;

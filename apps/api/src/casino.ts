@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
-import { betSchema,rouletteSchema,roulettePayout,handValue,crashPoint,crashMultiplier,CRASH } from '@street/shared';
+import { betSchema,rouletteSchema,handValue,crashMultiplier,CRASH } from '@street/shared';
 import type { CasinoRound, RouletteChoice } from '@street/shared';
 import { sql,ledger,fail,hash,randomInt } from './db';
 import type { AppEnv,RoundRow } from './types';
@@ -71,12 +71,16 @@ casino.get('/history',async c=>{
  return c.json({data:(await sql(db,'SELECT * FROM casino_rounds WHERE user_id=? ORDER BY started_at DESC LIMIT 20',user).all<RoundRow>()).results.map(r=>publicRound(r))});
 });
 casino.post('/roulette/spin',async c=>{
- const b=rouletteSchema.parse(await c.req.json()),n=randomInt(37);
- return c.json({data:publicRound(await start(c.env.DB,c.get('userId'),b.key,b.stake,'roulette',{number:n,choice:b.choice},JSON.stringify(b),true,roulettePayout(n,b.choice,b.stake)))});
+  const b=rouletteSchema.parse(await c.req.json());
+  const old=await sql(c.env.DB,'SELECT * FROM casino_rounds WHERE id=? AND user_id=? AND request_hash=?',b.key,c.get('userId'),await hash(`roulette:${JSON.stringify(b)}`)).first<RoundRow>();
+  if(old)return c.json({data:publicRound(old)});
+  fail('Рулетка теперь общая. Обнови игру и подтверди ставку в новом раунде.',409);
 });
 casino.post('/crash/start',async c=>{
- const b=betSchema.parse(await c.req.json());
- return c.json({data:publicRound(await start(c.env.DB,c.get('userId'),b.key,b.stake,'crash',{point:crashPoint(randomInt(1000000000)/1000000000)},JSON.stringify(b)))});
+  const b=betSchema.parse(await c.req.json());
+  const old=await sql(c.env.DB,'SELECT * FROM casino_rounds WHERE id=? AND user_id=? AND request_hash=?',b.key,c.get('userId'),await hash(`crash:${JSON.stringify(b)}`)).first<RoundRow>();
+  if(old)return c.json({data:publicRound(await expireRound(c.env.DB,old))});
+  fail('Ракета теперь общая. Обнови игру и подтверди ставку в новом раунде.',409);
 });
 casino.get('/crash/:id',async c=>{
  const db=c.env.DB,r=await ownedRound(db,c.req.param('id'),c.get('userId'));

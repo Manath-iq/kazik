@@ -15,18 +15,18 @@ test('375×812: вкладки, игровой canvas, пауза, резуль�
  await page.keyboard.down('KeyD');
  await expect(page.locator('.run-hud')).toContainText('00:05',{timeout:10000});
  await page.keyboard.up('KeyD');
- await page.getByRole('button',{name:'Пауза',exact:true}).click();await expect(page.getByText('Район подождёт')).toBeVisible();
+  await page.getByRole('button',{name:'Пауза',exact:true}).click();await expect(page.getByRole('heading',{name:'Пауза',exact:true})).toBeVisible();
  const frozen=await page.locator('.run-hud strong').innerText();
  // Проверка условия, не фиксированный sleep: HUD не должен меняться ни на одном кадре.
  await page.evaluate(()=>new Promise<void>(resolve=>{let n=0;const step=()=>{if(++n===80)resolve();else requestAnimationFrame(step);};requestAnimationFrame(step);}));
  await expect(page.locator('.run-hud strong')).toHaveText(frozen);
  await page.screenshot({path:'test-results/pause-375.png'});
  await page.getByRole('button',{name:'ЗАВЕРШИТЬ ВЫЛАЗКУ',exact:true}).click();
- await expect(page.getByText('Район тебя')).toBeVisible({timeout:20000});
+  await expect(page.getByRole('heading',{name:'Вылазка окончена'})).toBeVisible({timeout:20000});
  await expect(page.getByRole('button',{name:'ЕЩЁ РАЗ →'})).toBeVisible();
- await page.getByRole('button',{name:'НА РАЙОН',exact:true}).click();
+  await page.getByRole('button',{name:'На район',exact:true}).click();
  await page.getByRole('button',{name:'Открыть профиль'}).click();await expect(page.getByRole('dialog')).toBeVisible();
- await expect(page.getByRole('dialog')).toContainText('Награда за вылазку');await page.getByRole('button',{name:'Закрыть',exact:true}).click();
+  await page.getByRole('button',{name:'Операции',exact:true}).click();await expect(page.getByRole('dialog')).toContainText('Награда за вылазку');await page.getByRole('button',{name:'Закрыть',exact:true}).click();
  await page.reload();await expect(page.getByRole('button',{name:/НАЧАТЬ ВЫЛАЗКУ/})).toBeVisible();
  expect(errors).toEqual([]);
 });

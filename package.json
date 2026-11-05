@@ -15,6 +15,9 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "assets:fx": "node tools/fx/export.mjs",
+    "widget:setup": "node tools/widget/setup.mjs",
+    "widget:validate": ".local/widget-sandbox/node_modules/.bin/tsx tools/widget/validate.mjs",
+    "widget:preview": "node tools/widget/preview.mjs",
     "build": "npm run build -w @street/web && npm run build -w @street/api",
     "build:test": "npm run build:test -w @street/web && npm run build:test -w @street/api",
     "check": "npm run lint && npm run typecheck && npm test && npm run build"

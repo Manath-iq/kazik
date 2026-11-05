@@ -1,5 +1,37 @@
 # STREET LEGENDS — ход разработки
 
+## Выпущено — общие раунды и Telegram, 06.11.2026
+
+**Worker:** `719f5d7e-0cea-4d46-a306-356e289bc78a`, https://street-legends-test.todominate-ai.workers.dev. D1 0006 применена; SQLite DO `CasinoRoom` создан на существующем тестовом Worker без подключения платного плана.
+
+Реализовано:
+- Общий native dialog: явные auto margins (первопричина Tailwind reset), равные 16px+safe-area, max-width, opacity/scale и reduced motion. Проверены 320/375/430.
+- Автоматические общие рулетка/Crash: 10с ставок, alarms, persistent round UUID/phase/result, hibernating WS, одноразовые tickets, reconnect. Никакой клиентской генерации исходов/автоповторных ставок. Старый blackjack и legacy cashout сохранены.
+- Атомарная D1-ставка/выплата через SQL triggers и immutable ledger. Idempotency key/hash, late-admission проверяется в D1 после задержки, cashout строго по времени сервера, повторы settlement безопасны после рестарта.
+- Компактные presets/ручная сумма/ВА-БАНК в пределах лимита; принятая ставка, история/правила отдельно. Сумма сохраняется, подтверждение каждый раунд.
+- Оригинальная ракета по прямой диагонали, ускорение/параллакс/72 переиспользуемые звезды/след/взрыв; RAF не работает в фоне, reduced motion. Haptics событийные с throttling и opt-out.
+- Preload Phaser/арт/FX, пиксельный loading с первого нажатия до POST_RENDER; ошибка/повтор загрузки. Системные Telegram ready/expand/swipes/closing confirmation feature-checked, свайпы не включаются обратно при выходе из вылазки.
+- Настоящий `widgets/welcome.html` profile 1, официальная QuickJS-валидация (6 262 raw / 2 885 gzip, light/dark, trusted tap, synthetic block, no-SDK). Официальный host preview загрузился, height 531px, без runtime failure. Рабочий `/start` с inline WebApp; при ошибке доставки HTTP 503 для retry.
+
+Проверки: `npm run check` (lint/typecheck/test/build), `npm run build:test`; 77 unit/runtime tests; 3 focused E2E (вылазка/пауза/результат/кошелёк, 4 вкладки/overflow, общая комната/WS/dialog). Короткий remote-check: health 200, новый JS `index-Db_a6b0H`, оба DO-стола созданы, настоящий remote WS получает round. Удалённые ставки, отправки сообщений и Stars-операции при проверке не создавались.
+
+Данные: перед миграцией защищённый `.local/pre-live-2026-11-06.sql` (0600), восстановление in-memory: integrity ok, 0 расхождений wallet/ledger. Миграция только добавляет таблицу/индексы/триггеры; существующие кошельки/Stars/вылазки не переписываются.
+
+Реальные ограничения:
+- Публичный `sendWidget` у бота **404 Not Found**. Message Widget подготовлен и проверен, но в production не отправляется и не подменяется HTML/WebView. Эксперимент — официальный локальный host. `getMe.has_main_web_app=false`: ссылка виджета ведёт `/start play` → inline запуск; однокнопочный startapp требует Main Mini App в BotFather.
+- Custom Emoji ракета найдена и скачана как TGS в `.local/`; лицензия на распространение не указана, поэтому в игре оставлен наш оригинальный PNG, не чужой Lottie bundle.
+- Физические iPhone/Android (тактильный отклик, системные жесты и FPS) проверяет владелец. 60 FPS на устройствах не заявлены измеренными. При исчерпании Free-квоты возможна остановка до сброса; оплачиваемого upgrade нет.
+
+Файлы/контракты: `docs/LIVE_CASINO.md`, `docs/MESSAGE_WIDGET.md`, `docs/API.md`, `docs/DEPLOY.md`. Design decision log обновлён как pending-review; утверждённая палитра и личная taste-memory не менялись.
+
+Новая задача пользователя расширяет MVP: автоматические общие рулетка/Crash, native feedback, переход вылазки и настоящий Message Widget. Stars и полные выплаты не изменяются.
+
+Порядок: общий dialog → SQLite Durable Objects + alarms/WebSocket и атомарные D1-ставки → синхронные поля/панель → haptics → scene-ready loading → безопасный Telegram SDK → официальный Widget Sandbox + стабильный `/start` → мобильные и конкурентные тесты.
+
+Причина смещения dialog: Tailwind preflight сбрасывает margin браузерного dialog; правило safe-area задаёт inset без явных auto margins. Исправляется общий компонент, не окно банды.
+
+Free-only: SQLite DO официально доступен на Free (проверено 06.11); нет постоянных серверных setInterval, исходы/фазы сохраняются, будильники продолжаются без клиентов. Деньги остаются в D1 с append-only ledger и SQL-trigger транзакциями; граница DO/D1 восстанавливается идемпотентно. Платный план не подключается.
+
 ## В работе — компактный игровой UI, 05.11.2026
 
 Подтверждено пользователем: «Сразу в код». Убрать слоганы/лишние объяснения и постоянный скролл основных экранов; ориентироваться на простоту переданных pixel_ui референсов. Сохраняются Night Arcade, графика, навигация, все игровые/денежные/Stars контракты.

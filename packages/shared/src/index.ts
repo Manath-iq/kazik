@@ -1,6 +1,9 @@
 import { z } from 'zod';
+import type { RouletteChoice } from './casino-contracts';
 export * from './support';
 export * from './currency';
+export * from './live-casino';
+export * from './casino-contracts';
 
 export const BALANCE = {
   hp: 100, speed: 155, damage: 12, fireDelay: 850, range: 230,
@@ -48,10 +51,6 @@ export const progressSchema = z.object({
   level: z.number().int().min(1).max(200), distance: z.number().nonnegative().max(1000000),
 });
 export type RunProgress = z.infer<typeof progressSchema>;
-export const stakeSchema = z.number().int().min(10).max(1000).refine(n => n % 2 === 0, 'Ставка должна быть чётной');
-export const betSchema = z.object({ key: z.uuid(), stake: stakeSchema });
-export const rouletteSchema = betSchema.extend({ choice: z.union([z.enum(['red', 'black', 'zero']), z.number().int().min(0).max(36)]) });
-export type RouletteChoice = z.infer<typeof rouletteSchema>['choice'];
 const RED = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
 export function rouletteColor(n: number) { return n === 0 ? 'zero' : RED.has(n) ? 'red' : 'black'; }
 export function roulettePayout(n: number, choice: RouletteChoice, stake: number) {
