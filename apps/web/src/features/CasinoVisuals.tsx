@@ -4,25 +4,39 @@ import { CRASH,LIVE_CASINO,crashMultiplier,rouletteColor } from '@street/shared'
 import type { LiveRound } from '@street/shared';
 import { assetUrl } from '../app/art';
 import { reducedMotion,subscribeEffects,effectsPreference } from '../app/effects';
+import { wheelOrder,wheelPoint,wheelPocket,rocketPosition } from './casino-geometry';
 
-export const wheelOrder=[0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
+export { wheelOrder } from './casino-geometry';
 export function liveMultiplier(round:LiveRound,now:number){return round.phase==='result'?round.crashPoint??1:round.phase==='playing'?crashMultiplier(now-round.startedAt):1;}
 export function RouletteVisual({round,offset}:{round:LiveRound;offset:MutableRefObject<number>}){
- const wheel=useRef<HTMLDivElement>(null);
+ const wheel=useRef<SVGGElement>(null);
  useEffect(()=>{
   let frame=0;const el=wheel.current;if(!el)return;
   const draw=()=>{
    if(document.hidden)return;
    const target=1440-wheelOrder.indexOf(round.number??0)*360/37;
    const progress=round.phase==='betting'?0:round.phase==='result'||reducedMotion()?1:Math.max(0,Math.min(1,(Date.now()+offset.current-round.startedAt)/LIVE_CASINO.rouletteMs));
-   el.style.transform=`rotate(${target*(1-(1-progress)**3)}deg)`;
+    el.setAttribute('transform',`rotate(${target*(1-(1-progress)**3)} 160 160)`);
    if(progress<1&&round.phase==='playing'&&!reducedMotion())frame=requestAnimationFrame(draw);
   };
   const start=()=>{cancelAnimationFrame(frame);draw();};start();
   document.addEventListener('visibilitychange',start);const stop=subscribeEffects(start);
   return ()=>{cancelAnimationFrame(frame);stop();document.removeEventListener('visibilitychange',start);};
  },[round.id,round.phase,round.number,round.startedAt,offset]);
- return <div className="roulette-stage live-wheel-stage"><div className="roulette-pointer" aria-hidden="true">▼</div><div ref={wheel} className="roulette-wheel">{wheelOrder.map((n,i)=><span key={n} className={`wheel-number ${rouletteColor(n)} ${round.phase==='result'&&round.number===n?'winner':''}`} style={{transform:`rotate(${i*360/37}deg) translateY(calc(var(--wheel-size) * -.435)) rotate(90deg)`}}>{n}</span>)}<div className="wheel-center"><span>SL</span></div></div>{round.phase==='result'&&<strong className={`wheel-outcome ${rouletteColor(round.number??0)}`}>{round.number}</strong>}</div>;
+ return <div className="roulette-stage live-wheel-stage"><svg className="roulette-dial" viewBox="0 0 320 320" role="img" aria-label={`Европейская рулетка, числа от 0 до 36${round.phase==='result'?`. Выпало ${round.number}`:''}`}>
+  <circle cx="160" cy="160" r="153" fill="#080B10" stroke="#FFCA3A" strokeWidth="5"/>
+  <circle cx="160" cy="160" r="146" fill="#1B2532" stroke="#344154" strokeWidth="3"/>
+  <g ref={wheel}>{wheelOrder.map((n,i)=>{const color=rouletteColor(n),winner=round.phase==='result'&&round.number===n,p=wheelPoint(i*360/37-90,124);return <g key={n} className={`roulette-pocket ${color} ${winner?'winning-pocket':''}`}>
+   <path d={wheelPocket(i)} fill={winner?'#FFCA3A':color==='red'?'#FF6575':color==='zero'?'#C5F542':'#141B25'} stroke={winner?'#E7EDF5':'#080B10'} strokeWidth={winner?2.5:1}/>
+   <text className="roulette-pocket-number" x={p.x} y={p.y} transform={`rotate(${i*360/37} ${p.x} ${p.y})`} textAnchor="middle" dominantBaseline="central" fill={winner||color!=='black'?'#080B10':'#E7EDF5'}>{n}</text>
+  </g>;})}</g>
+  <circle cx="160" cy="160" r="103" fill="#0E131B" stroke="#FFCA3A" strokeWidth="2"/>
+  {Array.from({length:8},(_,i)=>{const a=wheelPoint(i*45,58),b=wheelPoint(i*45,96);return <path key={i} d={`M${a.x} ${a.y}L${b.x} ${b.y}`} stroke="#344154" strokeWidth="2"/>;})}
+  <circle cx="160" cy="160" r="54" fill="#141B25" stroke="#FFCA3A" strokeWidth="3"/>
+  <circle cx="160" cy="160" r="46" fill="#080B10" stroke="#344154" strokeWidth="1"/>
+  <text x="160" y="160" textAnchor="middle" dominantBaseline="central" className="roulette-hub-text">{round.phase==='result'?round.number:'SL'}</text>
+  <path d="M148 3H172L160 27Z" fill="#FFCA3A" stroke="#080B10" strokeWidth="2"/>
+ </svg></div>;
 }
 
 // A small deterministic pixel field: fixed pool, no allocating particles per frame.
@@ -32,7 +46,7 @@ export function CrashVisual({round,offset}:{round:LiveRound;offset:MutableRefObj
  useEffect(()=>{
   const el=canvas.current,context=el?.getContext('2d');if(!el||!context)return;
   const rocket=new Image();rocket.src=assetUrl('rocket');
-  let frame=0,w=320,h=190,previousText='',milestone=1;
+   let frame=0,w=320,h=190,previousText='',milestone=0;
   const startAt=performance.now();
   const resize=()=>{const rect=el.getBoundingClientRect();w=Math.max(1,Math.round(rect.width/2));h=Math.max(1,Math.round(rect.height/2));el.width=w;el.height=h;draw();};
   function draw(){
@@ -47,10 +61,16 @@ export function CrashVisual({round,offset}:{round:LiveRound;offset:MutableRefObj
     context.globalAlpha=still?.65:.4+.5*(.5+.5*Math.sin(ambient*(1+star.layer)+star.x*40));context.fillStyle=star.layer===1?'#8B78FF':'#E7EDF5';context.fillRect(x,y,star.size,star.size);
    }
    context.globalAlpha=1;
-   // x and y share ONE progress: the path is strictly straight, never a Bezier.
-   // Perspective travel approaches the upper-right; accelerating stars preserve speed at high x.
-   const t=!still&&(flying||crashed)?Math.min(1,(elapsed*.22+elapsed*elapsed*.025)/(1+elapsed*.22+elapsed*elapsed*.025)):0;
-   const x=18+(w-42)*t,y=h-18-(h-44)*t;
+    // The chart/rocket position is meaningful state, not optional particle FX.
+    // Turning effects off must not pin the rocket at the launch pad.
+    const {x,y,startX,startY}=rocketPosition(flying||crashed?elapsed:0,w,h);
+    if(flying||crashed){
+     context.beginPath();context.moveTo(startX,startY);context.lineTo(x,y);context.lineTo(x,startY);context.closePath();context.fillStyle=crashed?'#FF657512':'#8B78FF12';context.fill();
+     context.lineCap='square';context.lineJoin='miter';
+     context.beginPath();context.moveTo(startX,startY);context.lineTo(x,y);context.strokeStyle=crashed?'#FF657540':'#8B78FF45';context.lineWidth=5;context.stroke();
+     context.strokeStyle=crashed?'#FF6575':'#FFCA3A';context.lineWidth=1.5;context.stroke();
+     context.fillStyle='#E7EDF5';context.fillRect(Math.round(x-1),Math.round(y-1),2,2);
+    }
    if(flying&&!still){
     for(let i=10;i>0;i--){context.fillStyle=i>6?'#8B78FF':i>3?'#FFCA3A':'#E7EDF5';context.globalAlpha=(11-i)/12;const len=i*(2+Math.min(2,elapsed*.04));context.fillRect(Math.round(x-len-4),Math.round(y+len+4),i%3+1,i%3+1);}
     context.globalAlpha=1;
@@ -61,7 +81,7 @@ export function CrashVisual({round,offset}:{round:LiveRound;offset:MutableRefObj
     for(let i=0;i<12;i++){const a=i*Math.PI/6;context.fillStyle=i%2?'#FFCA3A':'#FF6575';context.globalAlpha=1-age*.7;context.fillRect(Math.round(x+Math.cos(a)*(7+age*17)),Math.round(y+Math.sin(a)*(7+age*17)),3,3);}
     context.globalAlpha=1;
    }
-   if(value.current){const text=`×${mult.toFixed(2)}`;if(text!==previousText){value.current.textContent=text;previousText=text;}const next=Math.floor(Math.log2(mult));if(next>milestone&&!still){milestone=next;value.current.animate([{transform:'scale(1.05)'},{transform:'scale(1)'}],{duration:160});}}
+    if(value.current){const text=`×${mult.toFixed(2)}`;if(text!==previousText){value.current.textContent=text;previousText=text;}const next=Math.floor(Math.log2(mult));if(next>milestone&&!still){milestone=next;value.current.animate?.([{transform:'scale(1.05)'},{transform:'scale(1)'}],{duration:160});}}
    if(!still||flying)frame=requestAnimationFrame(draw);
   }
   const restart=()=>{cancelAnimationFrame(frame);draw();};

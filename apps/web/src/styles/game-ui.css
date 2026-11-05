@@ -247,11 +247,6 @@ html,body,#root{overflow:hidden}
  .game-ui .result-card{padding:12px}
  .game-ui .result-income strong{font-size:22px}
 }
-@container (max-height:170px){
- .game-ui .roulette-stage .wheel-number{display:none}
- .game-ui .roulette-stage .wheel-center{inset:22%}
- .game-ui .roulette-stage .wheel-center span{font-size:20px}
-}
 @media(max-width:359px){
  .game-ui .topbar{gap:6px;padding-inline:8px}
  .game-ui .profile-button{gap:6px}

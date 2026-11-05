@@ -1,7 +1,7 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/node_modules/**', '**/worker-configuration.d.ts', '**/.wrangler/**', '.local/**', 'vendor/**', 'tools/art/**'] },
+  { ignores: ['**/dist/**', '**/node_modules/**', '**/worker-configuration.d.ts', '**/.wrangler/**', '.local/**', 'test-results/**', 'playwright-report/**', 'vendor/**', 'tools/art/**'] },
   { files: ['tools/**/*.mjs'], languageOptions: { globals: { console: 'readonly', URL: 'readonly', fetch: 'readonly' } } },
   js.configs.recommended,
   ...tseslint.configs.recommended,
